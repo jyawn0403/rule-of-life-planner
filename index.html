@@ -1,0 +1,2136 @@
+<!DOCTYPE html><script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Rule Of Life Planner",
+  "schemaVersion": 1
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rule of Life Planner | Fr. Justin Yawn</title>
+<style>
+  :root {
+    color-scheme: light;
+    --hunter: #2D5016;
+    --grass: #5A8A3C;
+    --teal: #2D7F7F;
+    --slate: #5A6878;
+    --slate-light: #8A9BB0;
+    --cream: #FAFAF7;
+    --warm-white: #F5F3EE;
+    --gold: #B8922A;
+    --red: #C0392B;
+    --text-dark: #1A1A1A;
+    --text-mid: #3D3D3D;
+    --text-light: #6B6B6B;
+    --border: #D8D4CB;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .header {
+    background: var(--hunter);
+    color: white;
+    padding: 20px 28px 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .header-title { font-size: 22px; font-weight: normal; letter-spacing: 0.5px; color: #E8F0E0; }
+  .header-sub { font-size: 12px; color: #A8C090; margin-top: 2px; font-style: italic; letter-spacing: 0.3px; }
+  .header-date { text-align: right; font-size: 12px; color: #A8C090; font-style: italic; }
+  .nav {
+    display: flex;
+    background: #243D10;
+    border-bottom: 3px solid var(--grass);
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: 11px 18px;
+    cursor: pointer;
+    font-family: Georgia, serif;
+    font-size: 13px;
+    color: #A8C090;
+    border: none;
+    background: transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -3px;
+    letter-spacing: 0.3px;
+  }
+  .nav-tab:hover { color: white; }
+  .nav-tab.active { color: white; background: var(--hunter); border-bottom: 3px solid var(--grass); font-weight: bold; }
+  .content { padding: 24px 28px; max-width: 900px; margin: 0 auto; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; margin-top: 28px; }
+  .section-header:first-child { margin-top: 0; }
+  .section-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--grass); flex-shrink: 0; }
+  .section-dot.teal { background: var(--teal); }
+  .section-dot.slate { background: var(--slate); }
+  .section-dot.gold { background: var(--gold); }
+  .section-dot.red { background: var(--red); }
+  .section-title { font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; color: var(--hunter); }
+  .section-title.teal { color: var(--teal); }
+  .section-title.slate { color: var(--slate); }
+  .section-title.red { color: var(--red); }
+  .card { background: white; border-radius: 8px; border: 1px solid var(--border); padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .card-title { font-size: 12px; font-weight: bold; color: var(--slate); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #EEE; }
+  .pillar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-bottom: 16px; }
+  .pillar { background: white; border-radius: 8px; border-top: 4px solid var(--hunter); padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .pillar.teal { border-top-color: var(--teal); }
+  .pillar.grass { border-top-color: var(--grass); }
+  .pillar.slate { border-top-color: var(--slate); }
+  .pillar.gold { border-top-color: var(--gold); }
+  .pillar-icon { font-size: 20px; margin-bottom: 6px; }
+  .pillar-name { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--slate-light); margin-bottom: 8px; font-weight: bold; }
+  .pillar-items { list-style: none; }
+  .pillar-items li { font-size: 13px; color: var(--text-mid); padding: 3px 0; border-bottom: 1px dotted #EEE; line-height: 1.4; }
+  .pillar-items li:last-child { border-bottom: none; }
+  .pillar-items li::before { content: "→ "; color: var(--grass); font-size: 11px; }
+  .word-banner {
+    background: linear-gradient(135deg, var(--hunter) 0%, var(--teal) 100%);
+    color: white; border-radius: 10px; padding: 24px; text-align: center; margin-bottom: 20px;
+    position: relative; overflow: hidden;
+  }
+  .word-banner::before { content: ""; position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.05); }
+  .word-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #A8C090; margin-bottom: 8px; }
+  .word-main { font-size: 38px; font-weight: normal; letter-spacing: 3px; color: white; margin-bottom: 8px; }
+  .word-scripture { font-size: 13px; color: #C8E0B0; font-style: italic; max-width: 480px; margin: 0 auto; line-height: 1.5; }
+  .month-banner {
+    background: white; border-left: 6px solid var(--teal); border-radius: 0 8px 8px 0;
+    padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center;
+    justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .month-name { font-size: 28px; color: var(--hunter); letter-spacing: 1px; }
+  .month-word-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--slate-light); }
+  .month-word { font-size: 22px; color: var(--teal); font-style: italic; }
+  .intention-row { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #F0EDE8; }
+  .intention-row:last-child { border-bottom: none; }
+  .intention-symbol { width: 22px; height: 22px; border-radius: 50%; background: var(--grass); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; margin-top: 2px; }
+  .intention-symbol.teal { background: var(--teal); }
+  .intention-symbol.slate { background: var(--slate); }
+  .intention-symbol.gold { background: var(--gold); }
+  .intention-text { font-size: 14px; color: var(--text-mid); }
+  .dates-list { list-style: none; }
+  .date-item { display: flex; gap: 14px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #F0EDE8; }
+  .date-item:last-child { border-bottom: none; }
+  .date-badge { background: var(--hunter); color: white; border-radius: 6px; padding: 4px 8px; font-size: 11px; min-width: 54px; text-align: center; flex-shrink: 0; }
+  .date-badge.teal { background: var(--teal); }
+  .date-badge.slate { background: var(--slate); }
+  .date-badge.grass { background: var(--grass); }
+  .date-badge.gold { background: var(--gold); }
+  .date-info { font-size: 13px; color: var(--text-mid); line-height: 1.4; }
+  .date-cat { font-size: 11px; color: var(--slate-light); font-style: italic; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 620px) { .two-col { grid-template-columns: 1fr; } .pillar-grid { grid-template-columns: 1fr 1fr; } }
+  .week-header { background: var(--warm-white); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .week-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--slate-light); }
+  .week-range { font-size: 20px; color: var(--hunter); }
+  .week-theme { font-size: 14px; font-style: italic; color: var(--teal); }
+  .priorities-list { list-style: none; }
+  .priority-item { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid #F0EDE8; }
+  .priority-item:last-child { border-bottom: none; }
+  .priority-num { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--hunter); color: var(--hunter); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; flex-shrink: 0; }
+  .priority-text { font-size: 14px; color: var(--text-mid); }
+  .priority-tag { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-left: 6px; vertical-align: middle; }
+  .tag-parish { background: #E8F2E0; color: var(--hunter); }
+  .tag-diocese { background: #E0F0F0; color: var(--teal); }
+  .tag-personal { background: #FFF3E0; color: var(--gold); }
+  .tag-family { background: #FCE8E8; color: #C0392B; }
+  .rel-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .rel-table th { background: var(--hunter); color: white; padding: 9px 12px; text-align: left; font-weight: normal; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .rel-table td { padding: 9px 12px; border-bottom: 1px solid #EEE; vertical-align: top; color: var(--text-mid); }
+  .rel-table tr:hover td { background: #F8F6F2; }
+  .rel-category { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+  .cat-parish { background: #E8F2E0; color: var(--hunter); }
+  .cat-diocese { background: #E0F0F0; color: var(--teal); }
+  .cat-staff { background: #EEE; color: var(--slate); }
+  .cat-personal { background: #F8F0E0; color: var(--gold); }
+  .prompt-box { background: var(--warm-white); border-left: 4px solid var(--teal); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 12px; font-size: 14px; color: var(--text-mid); font-style: italic; line-height: 1.6; }
+  .prompt-box strong { font-style: normal; color: var(--teal); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; }
+  .gratitude-box { background: linear-gradient(135deg, #F8FBF5 0%, #F0F8F0 100%); border: 1px solid #D0E8C8; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; }
+  .gratitude-title { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--grass); font-weight: bold; margin-bottom: 10px; }
+  .gratitude-item { display: flex; gap: 10px; align-items: flex-start; padding: 5px 0; font-size: 14px; color: var(--text-mid); }
+  .gratitude-item::before { content: "✦"; color: var(--grass); font-size: 10px; margin-top: 4px; flex-shrink: 0; }
+  .artifact-footer { background: #F0EDE8; border-top: 1px solid var(--border); padding: 12px 28px; font-size: 11px; color: var(--slate-light); text-align: center; font-style: italic; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 12px; color: var(--text-light); padding: 10px 14px; background: var(--warm-white); border-radius: 6px; border: 1px solid var(--border); margin-bottom: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-sym { font-weight: bold; color: var(--hunter); font-size: 14px; }
+  .checklist { list-style: none; }
+  .check-item { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; border-bottom: 1px solid #F0EDE8; font-size: 13px; color: var(--text-mid); }
+  .check-item:last-child { border-bottom: none; }
+  .check-box { width: 16px; height: 16px; border: 2px solid var(--slate-light); border-radius: 3px; flex-shrink: 0; margin-top: 2px; }
+  .notes-area { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-family: Georgia, serif; font-size: 13px; color: var(--text-light); line-height: 2.2; background-image: repeating-linear-gradient(transparent, transparent 31px, #E8E4DC 31px, #E8E4DC 32px); min-height: 120px; }
+  .updated-tag { font-size: 11px; color: var(--slate-light); font-style: italic; text-align: right; margin-bottom: 6px; }
+  .em-note { background: #FFF8E8; border: 1px solid #F0D890; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #8A6A10; margin-bottom: 16px; font-style: italic; }
+
+  /* TO-DO TAB STYLES */
+  .todo-toolbar {
+    display: flex; gap: 10px; align-items: center; margin-bottom: 18px; flex-wrap: wrap;
+  }
+  .todo-filter-btn {
+    padding: 5px 14px; border-radius: 20px; border: 1.5px solid var(--border);
+    background: white; font-family: Georgia, serif; font-size: 12px; cursor: pointer;
+    color: var(--slate); transition: all 0.15s; white-space: nowrap;
+  }
+  .todo-filter-btn.active { background: var(--hunter); color: white; border-color: var(--hunter); }
+  .todo-filter-btn:hover:not(.active) { border-color: var(--grass); color: var(--hunter); }
+  .todo-count-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; border-radius: 50%; font-size: 10px; font-weight: bold;
+    margin-left: 4px; background: rgba(255,255,255,0.25); color: inherit;
+  }
+  .todo-count-badge.dark { background: rgba(0,0,0,0.12); }
+
+  .todo-add-row {
+    display: flex; gap: 8px; margin-bottom: 20px; align-items: center;
+  }
+  .todo-add-input {
+    flex: 1; padding: 9px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+    font-family: Georgia, serif; font-size: 13px; color: var(--text-dark); background: white;
+    outline: none; transition: border-color 0.15s;
+  }
+  .todo-add-input:focus { border-color: var(--teal); }
+  .todo-add-select {
+    padding: 9px 10px; border: 1.5px solid var(--border); border-radius: 8px;
+    font-family: Georgia, serif; font-size: 12px; color: var(--slate); background: white;
+    outline: none; cursor: pointer;
+  }
+  .todo-add-btn {
+    padding: 9px 18px; border-radius: 8px; border: none; background: var(--hunter);
+    color: white; font-family: Georgia, serif; font-size: 13px; cursor: pointer;
+    transition: background 0.15s; white-space: nowrap;
+  }
+  .todo-add-btn:hover { background: var(--grass); }
+
+  .todo-list { list-style: none; }
+  .todo-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 12px 14px; margin-bottom: 8px;
+    background: white; border-radius: 8px; border: 1.5px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.2s;
+    position: relative;
+  }
+  .todo-item.high-priority {
+    border-left: 4px solid var(--gold);
+    background: #FFFDF5;
+  }
+  .todo-item.completed {
+    opacity: 0.55;
+    background: #F8F6F2;
+    border-color: #E0DDD8;
+  }
+  .todo-item.completed .todo-text { text-decoration: line-through; color: var(--text-light); }
+
+  .todo-checkbox {
+    width: 18px; height: 18px; border: 2px solid var(--slate-light); border-radius: 4px;
+    flex-shrink: 0; margin-top: 2px; cursor: pointer; position: relative;
+    transition: all 0.15s; appearance: none; -webkit-appearance: none;
+    background: white;
+  }
+  .todo-checkbox:checked {
+    background: var(--grass); border-color: var(--grass);
+  }
+  .todo-checkbox:checked::after {
+    content: "✓"; position: absolute; top: -2px; left: 2px;
+    font-size: 12px; color: white; font-weight: bold;
+  }
+
+  .todo-body { flex: 1; min-width: 0; }
+  .todo-text { font-size: 14px; color: var(--text-mid); line-height: 1.45; word-break: break-word; }
+  .todo-meta { display: flex; gap: 6px; margin-top: 5px; align-items: center; flex-wrap: wrap; }
+
+  .todo-tag {
+    display: inline-block; padding: 1px 8px; border-radius: 10px;
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; font-weight: bold;
+  }
+  .todo-tag.parish { background: #E8F2E0; color: var(--hunter); }
+  .todo-tag.diocese { background: #E0F0F0; color: var(--teal); }
+  .todo-tag.personal { background: #FFF3E0; color: var(--gold); }
+  .todo-tag.family { background: #FCE8E8; color: #C0392B; }
+  .todo-tag.general { background: #EEE; color: var(--slate); }
+
+  .priority-star {
+    cursor: pointer; font-size: 16px; line-height: 1; flex-shrink: 0;
+    margin-top: 1px; transition: transform 0.15s; user-select: none;
+    filter: grayscale(1) opacity(0.35);
+  }
+  .priority-star.lit {
+    filter: none;
+    animation: starPop 0.2s ease;
+  }
+  @keyframes starPop { 0%{transform:scale(1)} 50%{transform:scale(1.35)} 100%{transform:scale(1)} }
+
+  .todo-delete {
+    cursor: pointer; font-size: 14px; color: #CCC; flex-shrink: 0;
+    margin-top: 2px; line-height: 1; transition: color 0.15s;
+    background: none; border: none; padding: 0;
+    font-family: inherit;
+  }
+  .todo-delete:hover { color: var(--red); }
+
+  .high-priority-banner {
+    background: linear-gradient(90deg, #FFF8E8 0%, #FFFDF5 100%);
+    border: 1px solid #F0D890; border-left: 4px solid var(--gold);
+    border-radius: 0 8px 8px 0; padding: 10px 16px; margin-bottom: 16px;
+    font-size: 12px; color: #8A6A10; display: flex; align-items: center; gap: 8px;
+  }
+
+  .todo-empty {
+    text-align: center; padding: 32px 20px; color: var(--slate-light);
+    font-style: italic; font-size: 14px;
+  }
+
+  .todo-section-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--slate-light); font-weight: bold; padding: 4px 0 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .todo-section-label::after {
+    content: ""; flex: 1; height: 1px; background: var(--border);
+  }
+  .todo-completed-toggle {
+    font-size: 12px; color: var(--slate-light); cursor: pointer;
+    text-decoration: underline dotted; margin-bottom: 10px;
+    display: inline-block; font-style: italic;
+  }
+  .todo-completed-toggle:hover { color: var(--slate); }
+
+  /* MORNING EXAMEN STYLES */
+  .morning-banner {
+    background: linear-gradient(135deg, var(--hunter) 0%, var(--grass) 60%, var(--gold) 100%);
+    color: white; border-radius: 10px; padding: 22px 26px; margin-bottom: 18px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  }
+  .morning-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 2.5px; color: #E8F0E0; margin-bottom: 4px; }
+  .morning-title { font-size: 24px; letter-spacing: 0.5px; color: white; }
+  .morning-sub { font-size: 12px; color: #E8F0E0; font-style: italic; margin-top: 2px; }
+  .morning-date { font-size: 18px; color: white; font-style: italic; text-align: right; letter-spacing: 0.5px; }
+
+  .examen-form { display: flex; flex-direction: column; gap: 14px; margin-top: 10px; }
+  .examen-q {
+    background: white; border-radius: 8px; border: 1px solid var(--border);
+    padding: 16px 18px; display: flex; gap: 14px; align-items: flex-start;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .examen-q-num {
+    width: 30px; height: 30px; border-radius: 50%; background: var(--hunter); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+    flex-shrink: 0; font-weight: bold; margin-top: 2px;
+  }
+  .examen-q-body { flex: 1; min-width: 0; }
+  .examen-q-label {
+    font-size: 13px; font-weight: bold; color: var(--hunter);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;
+  }
+  .examen-q-prompt { font-size: 13px; color: var(--text-mid); margin-bottom: 10px; line-height: 1.5; }
+  .examen-q-prompt em { color: var(--slate-light); font-size: 11px; }
+  .examen-input {
+    width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 6px;
+    font-family: Georgia, serif; font-size: 14px; color: var(--text-dark); background: var(--cream);
+    outline: none; resize: vertical; line-height: 1.5; transition: border-color 0.15s;
+  }
+  .examen-input:focus { border-color: var(--teal); background: white; }
+
+  .examen-actions {
+    display: flex; align-items: center; gap: 12px; margin-top: 6px; flex-wrap: wrap;
+  }
+  .examen-clear-btn {
+    padding: 9px 14px; border-radius: 8px; border: 1.5px solid var(--border);
+    background: white; color: var(--slate); font-family: Georgia, serif; font-size: 12px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .examen-clear-btn:hover { border-color: var(--red); color: var(--red); }
+  .examen-status { font-size: 12px; color: var(--grass); font-style: italic; }
+
+  .examen-history-card {
+    background: white; border-radius: 8px; border: 1px solid var(--border);
+    padding: 18px 20px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid var(--teal);
+  }
+  .examen-history-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    border-bottom: 1px dotted var(--border); padding-bottom: 10px; margin-bottom: 12px; gap: 10px; flex-wrap: wrap;
+  }
+  .examen-history-date { font-size: 16px; color: var(--hunter); letter-spacing: 0.5px; }
+  .examen-history-day { font-size: 12px; color: var(--slate-light); font-style: italic; }
+  .examen-history-delete {
+    cursor: pointer; font-size: 13px; color: #CCC; background: none; border: none;
+    font-family: inherit; transition: color 0.15s;
+  }
+  .examen-history-delete:hover { color: var(--red); }
+  .examen-history-q {
+    margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dotted #F0EDE8;
+  }
+  .examen-history-q:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .examen-history-q-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--teal); font-weight: bold; margin-bottom: 4px;
+  }
+  .examen-history-q-text {
+    font-size: 14px; color: var(--text-mid); white-space: pre-wrap; line-height: 1.55;
+  }
+  .examen-history-q-text:empty::before {
+    content: "—"; color: var(--slate-light); font-style: italic;
+  }
+
+  .examen-reflection {
+    margin-top: 16px; padding: 14px 16px;
+    background: linear-gradient(135deg, #F8FBF5 0%, #F0F4ED 100%);
+    border-left: 3px solid var(--gold); border-radius: 0 6px 6px 0;
+  }
+  .examen-reflection-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--gold); font-weight: bold; margin-bottom: 6px;
+  }
+  .examen-reflection-text {
+    font-size: 13px; color: var(--text-mid); font-style: italic;
+    line-height: 1.65; white-space: pre-wrap;
+  }
+
+  /* RAPID LOG INTERACTIVE CHECKBOXES */
+  .rapid-checkbox {
+    width: 16px; height: 16px; border: 2px solid var(--slate-light); border-radius: 3px;
+    flex-shrink: 0; margin-top: 2px; cursor: pointer; position: relative;
+    transition: all 0.15s; appearance: none; -webkit-appearance: none;
+    background: white;
+  }
+  .rapid-checkbox:checked {
+    background: var(--grass); border-color: var(--grass);
+  }
+  .rapid-checkbox:checked::after {
+    content: "✓"; position: absolute; top: -3px; left: 1px;
+    font-size: 11px; color: white; font-weight: bold;
+  }
+  .check-item.checked span {
+    text-decoration: line-through;
+    color: var(--text-light);
+    opacity: 0.7;
+  }
+  .rapid-clear-btn {
+    padding: 5px 12px; border-radius: 6px; border: 1.5px solid var(--border);
+    background: white; color: var(--slate); font-family: Georgia, serif; font-size: 11px;
+    cursor: pointer; transition: all 0.15s; margin-top: 10px;
+  }
+  .rapid-clear-btn:hover { border-color: var(--red); color: var(--red); }
+
+  /* WEEK NOTES TEXTAREA */
+  .notes-textarea {
+    width: 100%;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    font-family: Georgia, serif;
+    font-size: 13px;
+    color: var(--text-dark);
+    line-height: 2.2;
+    background-image: repeating-linear-gradient(transparent, transparent 31px, #E8E4DC 31px, #E8E4DC 32px);
+    min-height: 180px;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+  }
+  .notes-textarea:focus {
+    border-color: var(--teal);
+  }
+  .notes-saved-indicator {
+    font-size: 11px;
+    color: var(--grass);
+    font-style: italic;
+    text-align: right;
+    margin-top: 6px;
+    min-height: 14px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ────────── CLOUD SYNC LAYER (begin) ────────── -->
+<style>
+  #cloud-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(45,80,22,0.97); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-family: Georgia, 'Times New Roman', serif;
+    padding: 20px;
+  }
+  #cloud-overlay.hidden { display: none; }
+  .cloud-card {
+    max-width: 540px; background: white; color: #1A1A1A;
+    padding: 32px 36px; border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .cloud-card h2 { font-size: 24px; color: #2D5016; margin-bottom: 4px; letter-spacing: 0.5px; font-weight: normal; }
+  .cloud-card .sub { font-size: 13px; color: #5A6878; font-style: italic; margin-bottom: 20px; }
+  .cloud-card p { font-size: 14px; line-height: 1.6; color: #3D3D3D; margin-bottom: 14px; }
+  .cloud-card label { display: block; font-size: 11px; color: #5A6878; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .cloud-card input[type="password"], .cloud-card input[type="text"] {
+    width: 100%; padding: 10px 12px; border: 1.5px solid #D8D4CB;
+    border-radius: 6px; font-family: Georgia, serif; font-size: 13px;
+    margin-bottom: 14px; color: #1A1A1A; background: #FAFAF7;
+  }
+  .cloud-card .err {
+    background: #FCE8E8; border: 1px solid #C0392B; color: #8A1A1A;
+    border-radius: 6px; padding: 10px 12px; font-size: 12px; margin-bottom: 14px;
+  }
+  .cloud-btn {
+    background: #2D5016; color: white; border: none;
+    padding: 10px 22px; border-radius: 6px;
+    font-family: Georgia, serif; font-size: 14px; cursor: pointer;
+    letter-spacing: 0.5px;
+  }
+  .cloud-btn:hover { background: #3D6A1E; }
+  .cloud-btn.secondary { background: white; color: #2D5016; border: 1.5px solid #2D5016; margin-left: 8px; }
+  .cloud-btn.secondary:hover { background: #F0F8F0; }
+  .cloud-btn.danger { background: white; color: #C0392B; border: 1.5px solid #C0392B; margin-left: 8px; }
+  .cloud-loading { text-align: center; }
+  .cloud-loading .title { font-size: 32px; letter-spacing: 2px; margin-bottom: 14px; color: white; }
+  .cloud-loading .msg { font-style: italic; color: #A8C090; font-size: 14px; }
+  .cloud-loading .spinner {
+    display: inline-block; width: 28px; height: 28px; border-radius: 50%;
+    border: 3px solid rgba(168,192,144,0.3); border-top-color: #A8C090;
+    animation: cloud-spin 1s linear infinite; margin-bottom: 16px;
+  }
+  @keyframes cloud-spin { to { transform: rotate(360deg); } }
+  #cloud-settings-btn {
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(168,192,144,0.4);
+    color: #E8F0E0; font-size: 11px; padding: 4px 10px; border-radius: 4px;
+    cursor: pointer; font-family: Georgia, serif; letter-spacing: 0.3px;
+    margin-top: 8px;
+  }
+  #cloud-settings-btn:hover { background: rgba(255,255,255,0.2); }
+  #cloud-status {
+    font-size: 11px; color: #A8C090; font-style: italic;
+    margin-top: 4px; min-height: 14px;
+  }
+  #cloud-status.error { color: #FFB0A0; }
+</style>
+
+<div id="cloud-overlay">
+  <div class="cloud-loading">
+    <div class="spinner"></div>
+    <div class="title">Rule of Life Planner</div>
+    <div class="msg">Reading from your repository…</div>
+  </div>
+</div>
+
+<script id="cloud-bootstrap">
+(function() {
+  const REPO = 'jyawn0403/rule-of-life-planner';
+  const FILE = 'data.json';
+  const BRANCH = 'main';
+  const TOKEN_KEY = 'rol-github-token';
+  const DATA_KEYS = ['rol-todos-v3', 'rol-evening-v1', 'rol-examen-v2', 'rol-rapid-log-v1', 'rol-week-notes-v1'];
+
+  const realLS = window.localStorage;
+  let cache = {};
+  let sha = null;
+  let cloudReady = false;
+  let saveTimer = null;
+  let inFlight = false;
+  let pendingAfterFlight = false;
+
+  function getToken() { try { return realLS.getItem(TOKEN_KEY); } catch(e){ return null; } }
+  function setToken(v) { try { realLS.setItem(TOKEN_KEY, v); } catch(e){} }
+  function clearToken() { try { realLS.removeItem(TOKEN_KEY); } catch(e){} }
+
+  // Storage shim: reads/writes go through cache; remote save is debounced.
+  const shim = {
+    getItem(k) {
+      if (k === TOKEN_KEY) return getToken();
+      return cache[k] !== undefined ? cache[k] : null;
+    },
+    setItem(k, v) {
+      if (k === TOKEN_KEY) { setToken(v); return; }
+      cache[k] = String(v);
+      if (cloudReady) schedulePush();
+    },
+    removeItem(k) {
+      if (k === TOKEN_KEY) { clearToken(); return; }
+      delete cache[k];
+      if (cloudReady) schedulePush();
+    },
+    clear() { cache = {}; if (cloudReady) schedulePush(); },
+    key(i) { return Object.keys(cache)[i] || null; },
+    get length() { return Object.keys(cache).length; }
+  };
+  Object.defineProperty(window, 'localStorage', { value: shim, configurable: true });
+
+  function utf8ToBase64(s) { return btoa(unescape(encodeURIComponent(s))); }
+  function base64ToUtf8(b) { return decodeURIComponent(escape(atob(b))); }
+
+  async function ghFetch() {
+    const token = getToken();
+    if (!token) { const e = new Error('NO_TOKEN'); e.code = 'NO_TOKEN'; throw e; }
+    const url = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE + '?ref=' + BRANCH + '&t=' + Date.now();
+    const res = await fetch(url, {
+      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' }
+    });
+    if (res.status === 404) return { data: {}, sha: null };
+    if (res.status === 401) { const e = new Error('BAD_TOKEN'); e.code = 'BAD_TOKEN'; throw e; }
+    if (res.status === 403) { const e = new Error('FORBIDDEN'); e.code = 'FORBIDDEN'; throw e; }
+    if (!res.ok) { const e = new Error('READ_FAIL'); e.code = 'READ_FAIL'; e.status = res.status; throw e; }
+    const j = await res.json();
+    const text = base64ToUtf8(j.content.replace(/\n/g, ''));
+    return { data: JSON.parse(text), sha: j.sha };
+  }
+
+  async function ghPush() {
+    if (inFlight) { pendingAfterFlight = true; return; }
+    const token = getToken();
+    if (!token) return;
+    inFlight = true;
+    setStatus('Saving…');
+    try {
+      const payload = Object.assign({ _meta: cloudMeta() }, cache);
+      const dataString = JSON.stringify(payload, null, 2);
+      const body = {
+        message: 'Update planner data ' + new Date().toISOString(),
+        content: utf8ToBase64(dataString),
+        branch: BRANCH
+      };
+      if (sha) body.sha = sha;
+      const url = 'https://api.github.com/repos/' + REPO + '/contents/' + FILE;
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+      if (res.status === 409 || res.status === 422) {
+        try { const fresh = await ghFetch(); sha = fresh.sha; } catch(e){}
+        inFlight = false;
+        schedulePush(true);
+        return;
+      }
+      if (!res.ok) { setStatus('Save failed (' + res.status + ')', true); inFlight = false; return; }
+      const j = await res.json();
+      sha = j.content.sha;
+      setStatus('Saved ' + new Date().toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', hour12:true}));
+    } catch(e) {
+      setStatus('Save failed', true);
+    } finally {
+      inFlight = false;
+      if (pendingAfterFlight) { pendingAfterFlight = false; schedulePush(true); }
+    }
+  }
+
+  function cloudMeta() {
+    return {
+      description: 'Persistent state for the Rule of Life Planner.',
+      schemaVersion: 1,
+      repo: REPO,
+      lastUpdated: new Date().toISOString()
+    };
+  }
+
+  function schedulePush(soon) {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => { ghPush(); }, soon ? 200 : 1500);
+  }
+
+  function setStatus(msg, isError) {
+    const el = document.getElementById('cloud-status');
+    if (!el) return;
+    el.textContent = msg || '';
+    el.classList.toggle('error', !!isError);
+  }
+
+  function showOverlay(html) {
+    const ov = document.getElementById('cloud-overlay');
+    if (!ov) return;
+    ov.innerHTML = html;
+    ov.classList.remove('hidden');
+  }
+  function hideOverlay() {
+    const ov = document.getElementById('cloud-overlay');
+    if (ov) ov.classList.add('hidden');
+  }
+
+  function showLoading(msg) {
+    showOverlay(
+      '<div class="cloud-loading">' +
+      '<div class="spinner"></div>' +
+      '<div class="title">Rule of Life Planner</div>' +
+      '<div class="msg">' + (msg || 'Reading from your repository…') + '</div>' +
+      '</div>'
+    );
+  }
+
+  function escapeHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function showTokenPrompt(errMsg) {
+    showOverlay(
+      '<div class="cloud-card">' +
+      '<h2>Connect this device</h2>' +
+      '<div class="sub">Paste your fine-grained GitHub personal access token</div>' +
+      (errMsg ? '<div class="err">' + escapeHtml(errMsg) + '</div>' : '') +
+      '<p>The token lives only in this browser, on this device. The planner sends it only to GitHub when reading or writing your data. You can replace or remove it anytime via the Settings button in the header.</p>' +
+      '<label for="cloud-token-input">GitHub personal access token</label>' +
+      '<input id="cloud-token-input" type="password" placeholder="github_pat_..." autocomplete="off">' +
+      '<button id="cloud-token-submit" class="cloud-btn">Connect</button>' +
+      '</div>'
+    );
+    setTimeout(() => {
+      const input = document.getElementById('cloud-token-input');
+      const btn = document.getElementById('cloud-token-submit');
+      if (!input || !btn) return;
+      const submit = () => {
+        const v = input.value.trim();
+        if (!v) return;
+        setToken(v);
+        showLoading('Connecting to GitHub…');
+        bootstrap();
+      };
+      btn.addEventListener('click', submit);
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+      input.focus();
+    }, 50);
+  }
+
+  function showSettings() {
+    const t = getToken() || '';
+    const masked = !t ? '(none)' : (t.length > 14 ? t.slice(0, 10) + '…' + t.slice(-4) : '(set)');
+    showOverlay(
+      '<div class="cloud-card">' +
+      '<h2>Cloud Settings</h2>' +
+      '<div class="sub">Where your planner data lives</div>' +
+      '<p><strong>Repository:</strong> ' + REPO + '<br>' +
+      '<strong>Data file:</strong> ' + FILE + ' (branch: ' + BRANCH + ')<br>' +
+      '<strong>Token on this device:</strong> ' + masked + '</p>' +
+      '<p>To use this planner on another device, open the same URL there and paste the same token. To rotate or revoke the token, generate a new one on GitHub and use Replace below.</p>' +
+      '<button id="cloud-settings-close" class="cloud-btn">Close</button>' +
+      '<button id="cloud-settings-replace" class="cloud-btn secondary">Replace token</button>' +
+      '<button id="cloud-settings-disconnect" class="cloud-btn danger">Disconnect</button>' +
+      '</div>'
+    );
+    setTimeout(() => {
+      const close = document.getElementById('cloud-settings-close');
+      const replace = document.getElementById('cloud-settings-replace');
+      const disconnect = document.getElementById('cloud-settings-disconnect');
+      if (close) close.addEventListener('click', hideOverlay);
+      if (replace) replace.addEventListener('click', () => { showTokenPrompt(); });
+      if (disconnect) disconnect.addEventListener('click', () => {
+        if (confirm('Disconnect this device? Your data stays safely on GitHub. You will need to paste your token again to reconnect.')) {
+          clearToken();
+          cache = {}; sha = null; cloudReady = false;
+          showTokenPrompt();
+        }
+      });
+    }, 50);
+  }
+  window.cloudOpenSettings = showSettings;
+
+  async function bootstrap() {
+    try {
+      if (!getToken()) { showTokenPrompt(); return; }
+      const result = await ghFetch();
+      const incoming = result.data || {};
+      DATA_KEYS.forEach(k => { if (incoming[k] !== undefined) cache[k] = incoming[k]; });
+      sha = result.sha;
+      cloudReady = true;
+      hideOverlay();
+      try { if (typeof window.renderTodos === 'function') window.renderTodos(); } catch(e){}
+      try { if (typeof window.renderEveningHistory === 'function') window.renderEveningHistory(); } catch(e){}
+      try { if (typeof window.renderExamenHistory === 'function') window.renderExamenHistory(); } catch(e){}
+      try { if (typeof window.initRapidLog === 'function') window.initRapidLog(); } catch(e){}
+      try { if (typeof window.initWeekNotes === 'function') window.initWeekNotes(); } catch(e){}
+      if (sha === null) schedulePush(true);
+      else setStatus('');
+    } catch(e) {
+      if (e.code === 'BAD_TOKEN') {
+        clearToken();
+        showTokenPrompt('That token was rejected by GitHub. Generate a fresh one and try again.');
+      } else if (e.code === 'FORBIDDEN') {
+        showTokenPrompt('GitHub denied access. Make sure your token has Contents: read & write on this repo.');
+      } else {
+        showTokenPrompt('Could not reach GitHub. Check your connection and try again.');
+      }
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootstrap);
+  } else {
+    bootstrap();
+  }
+})();
+</script>
+<!-- ────────── CLOUD SYNC LAYER (end) ────────── -->
+
+<div class="header">
+  <div>
+    <div class="header-title">Rule of Life Planner</div>
+    <div class="header-sub">The Rev. Justin Yawn · St. Francis in-the-Field Episcopal Church · Ponte Vedra Beach</div>
+  </div>
+  <div class="header-date">
+    <div>Est. April 2026</div>
+    <div style="margin-top:3px">Year A · Easter Season</div>
+    <button id="cloud-settings-btn" onclick="cloudOpenSettings()">⚙ Settings</button>
+    <div id="cloud-status"></div>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nav-tab active" onclick="showTab('annual',this)">✦ Annual Vision</button>
+  <button class="nav-tab" onclick="showTab('may',this)">May 2026</button>
+  <button class="nav-tab" onclick="showTab('week',this)">This Week</button>
+  <button class="nav-tab" onclick="showTab('morning',this)">☀ Morning Examen</button>
+  <button class="nav-tab" onclick="showTab('evening',this)">☾ Evening Examen</button>
+  <button class="nav-tab" onclick="showTab('todo',this)">☑ To-Do</button>
+  <button class="nav-tab" onclick="showTab('relationships',this)">Key Relationships</button>
+  <button class="nav-tab" onclick="showTab('review',this)">Review Prompts</button>
+</div>
+
+<!-- ANNUAL VISION -->
+<div id="tab-annual" class="tab-panel active">
+  <div class="content">
+    <div class="updated-tag">Last reviewed: April 24, 2026</div>
+    <div class="word-banner">
+      <div class="word-label">Word of the Year</div>
+      <div class="word-main">THRESHOLD</div>
+      <div class="word-scripture">"See, I am doing a new thing! Now it springs up; do you not perceive it? I am making a way in the wilderness and streams in the wasteland." — Isaiah 43:19</div>
+    </div>
+    <div class="section-header">
+      <div class="section-dot"></div>
+      <div class="section-title">2026 Pillars & Intentions</div>
+    </div>
+    <div class="pillar-grid">
+      <div class="pillar">
+        <div class="pillar-icon">✝</div>
+        <div class="pillar-name">Soul & Spiritual Life</div>
+        <ul class="pillar-items">
+          <li>Daily Office — consistency over intensity</li>
+          <li>Contemplative reading — Cassian, Philokalia, Desert Fathers</li>
+          <li>"From the Well" blog — steady, not viral</li>
+          <li>Give & receive spiritual direction</li>
+          <li>Annual silent retreat</li>
+        </ul>
+      </div>
+      <div class="pillar teal">
+        <div class="pillar-icon">⛪</div>
+        <div class="pillar-name">Parish — St. Francis</div>
+        <ul class="pillar-items">
+          <li>Grow ASA beyond 400</li>
+          <li>Space expansion — back 22 acres decision</li>
+          <li>Strengthen staff culture & team trust</li>
+          <li>Deepen adult formation programming</li>
+          <li>Annual Giving Campaign — fall</li>
+        </ul>
+      </div>
+      <div class="pillar grass">
+        <div class="pillar-icon">⚖</div>
+        <div class="pillar-name">Diocese — Standing Committee</div>
+        <ul class="pillar-items">
+          <li>Shepherd the episcopal transition faithfully</li>
+          <li>Bishop election preparation (late 2026)</li>
+          <li>Governance integrity & canonical clarity</li>
+          <li>Clergy care in the in-between season</li>
+          <li>Listening sessions & healing work</li>
+        </ul>
+      </div>
+      <div class="pillar gold">
+        <div class="pillar-icon">&#127968;</div>
+        <div class="pillar-name">Family & Personal</div>
+        <ul class="pillar-items">
+          <li>Presence with Vanessa & children</li>
+          <li>Physical health — rebuild post-CrossFit</li>
+          <li>Guard Sabbath (Mondays) fiercely</li>
+          <li>Intentional marriage — not just logistics</li>
+          <li>Fun and delight — not optional</li>
+        </ul>
+      </div>
+    </div>
+    <div class="section-header" style="margin-top:24px">
+      <div class="section-dot teal"></div>
+      <div class="section-title teal">Annual Milestones — 2026</div>
+    </div>
+    <div class="card">
+      <ul class="dates-list">
+        <li class="date-item"><span class="date-badge grass">Q2</span><div><div class="date-info">Conclude "Believing Together" Easter formation series</div><div class="date-cat">Parish · Formation</div></div></li>
+        <li class="date-item"><span class="date-badge teal">Q2</span><div><div class="date-info">Back 22 acres / Episcopal School — next phase decision point</div><div class="date-cat">Parish · Vision</div></div></li>
+        <li class="date-item"><span class="date-badge">Q3</span><div><div class="date-info">Bishop Election walkup — Standing Committee final governance prep</div><div class="date-cat">Diocese · Historic</div></div></li>
+        <li class="date-item"><span class="date-badge gold">Q4</span><div><div class="date-info">Bishop Election of the Diocese of Florida</div><div class="date-cat">Diocese · Landmark</div></div></li>
+        <li class="date-item"><span class="date-badge slate">Fall</span><div><div class="date-info">Annual Giving Campaign — "Harvesting Hope Together" sequel</div><div class="date-cat">Parish · Stewardship</div></div></li>
+        <li class="date-item"><span class="date-badge slate">Yr</span><div><div class="date-info">Staff retreat — continue Practicing the Way formation arc</div><div class="date-cat">Parish · Staff</div></div></li>
+      </ul>
+    </div>
+    <div class="two-col">
+      <div class="gratitude-box">
+        <div class="gratitude-title">Anchoring Gratitude — 2026</div>
+        <div class="gratitude-item">A parish that has grown into something beautiful under this ministry</div>
+        <div class="gratitude-item">Vanessa and the children — my grounding and my joy</div>
+        <div class="gratitude-item">Kevin, Mark, Santosh — a team I genuinely trust</div>
+        <div class="gratitude-item">The privilege of this threshold moment for the diocese</div>
+        <div class="gratitude-item">The Desert Fathers who shaped my interior life long before ordination</div>
+      </div>
+      <div class="card">
+        <div class="card-title">What I Want to Say "No" To</div>
+        <ul class="pillar-items">
+          <li>Meetings without a clear purpose or outcome</li>
+          <li>Urgency that crowds out the important</li>
+          <li>Reactive administration vs. visionary leadership</li>
+          <li>Neglecting Sabbath in the name of productivity</li>
+          <li>Email at night after dinner with the family</li>
+          <li>Performing busyness instead of being present</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAY 2026 -->
+<div id="tab-may" class="tab-panel">
+  <div class="content">
+    <div class="updated-tag">Last reviewed: April 30, 2026</div>
+    <div class="month-banner">
+      <div>
+        <div class="month-name">May 2026</div>
+        <div style="font-size:13px; color:var(--slate); font-style:italic; margin-top:2px">Easter Season continues · Ascension · Pentecost · Trinity Sunday · Year A</div>
+      </div>
+      <div style="text-align:right">
+        <div class="month-word-label">Word for the Month</div>
+        <div class="month-word">Cultivate</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">Monthly Intentions</div>
+        <div class="intention-row"><div class="intention-symbol">✝</div><div><div class="intention-text">Begin John Cassian's <em>Conferences</em> — 30 min in Thursday study block</div></div></div>
+        <div class="intention-row"><div class="intention-symbol teal">⛪</div><div><div class="intention-text">Close "Believing Together" with a strong formation finale</div></div></div>
+        <div class="intention-row"><div class="intention-symbol teal">⚖</div><div><div class="intention-text">Standing Committee: protect bishop search confidentiality through final stretch</div></div></div>
+        <div class="intention-row"><div class="intention-symbol gold">&#127968;</div><div><div class="intention-text">One intentional family outing — not just logistics, but delight</div></div></div>
+        <div class="intention-row"><div class="intention-symbol slate">✍</div><div><div class="intention-text">Publish 2 "From the Well" posts — Resurrection & Pentecost</div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Key Dates — May</div>
+        <ul class="dates-list">
+          <li class="date-item"><span class="date-badge teal">May 2</span><div><div class="date-info">Delegates Retreat — Holy Trinity, Gainesville (representing SC)</div><div class="date-cat">Diocese</div></div></li>
+          <li class="date-item"><span class="date-badge grass">May 3</span><div><div class="date-info">Senior Celebration & Youth Sunday — 10:15 AM service + reception</div><div class="date-cat">Parish</div></div></li>
+          <li class="date-item"><span class="date-badge">May 4</span><div><div class="date-info">Capital Campaign Meeting — 6 PM (POC: John Kinmonth)</div><div class="date-cat">Parish · Stewardship</div></div></li>
+          <li class="date-item"><span class="date-badge teal">May 6</span><div><div class="date-info">Bishop Search Council — Sarah Stonesifer-Boylan & Rebecca, 3 PM</div><div class="date-cat">Diocese · High</div></div></li>
+          <li class="date-item"><span class="date-badge teal">May 7</span><div><div class="date-info">Meet with +Doug — Standing Committee call, 9 AM</div><div class="date-cat">Diocese</div></div></li>
+          <li class="date-item"><span class="date-badge gold">May 10</span><div><div class="date-info">Mother's Day — Vanessa & families; Milt Bauer SW handout in service</div><div class="date-cat">Family · Pastoral</div></div></li>
+          <li class="date-item"><span class="date-badge">May 11</span><div><div class="date-info">SFITF Finance Committee — 8 PM Zoom</div><div class="date-cat">Parish</div></div></li>
+          <li class="date-item"><span class="date-badge grass">May 17</span><div><div class="date-info">Ascension Sunday observed · Liturgy of Belonging · Vestry Mtg (11:30 AM)</div><div class="date-cat">Parish · High</div></div></li>
+          <li class="date-item"><span class="date-badge">May 18</span><div><div class="date-info">Troop 23 Court of Honor — opening prayer (Ronan rank-up)</div><div class="date-cat">Parish · Scouts</div></div></li>
+          <li class="date-item"><span class="date-badge teal">May 19</span><div><div class="date-info">SC Presidents Network — Inaugural Meeting, 7:30 PM</div><div class="date-cat">Diocese</div></div></li>
+          <li class="date-item"><span class="date-badge slate">May 21</span><div><div class="date-info">Staff Appreciation Lunch (Hawkers, 12:30 PM) · DOK Monthly Meeting</div><div class="date-cat">Staff · Parish</div></div></li>
+          <li class="date-item"><span class="date-badge teal">May 24</span><div><div class="date-info">The Day of Pentecost — major liturgical celebration</div><div class="date-cat">High Feast · Parish</div></div></li>
+          <li class="date-item"><span class="date-badge slate">May 25</span><div><div class="date-info">Memorial Day weekend — pastoral presence</div><div class="date-cat">Pastoral</div></div></li>
+          <li class="date-item"><span class="date-badge">May 26</span><div><div class="date-info">VBS Planning + All Staff re: VBS upload</div><div class="date-cat">Parish · Staff</div></div></li>
+          <li class="date-item"><span class="date-badge grass">May 31</span><div><div class="date-info">Trinity Sunday · Monthly check-in — review & June planning</div><div class="date-cat">Liturgical · Planning</div></div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="section-header">
+      <div class="section-dot teal"></div>
+      <div class="section-title teal">Top 5 Priorities This Month</div>
+    </div>
+    <div class="card">
+      <ul class="priorities-list">
+        <li class="priority-item"><div class="priority-num">1</div><div class="priority-text">Preach Pentecost with depth — plan Ordinary Time series arc from here <span class="priority-tag tag-parish">Parish</span></div></li>
+        <li class="priority-item"><div class="priority-num">2</div><div class="priority-text">Shepherd the Bishop Search through confidentiality crisis — protocols, retreat slate, petition prep <span class="priority-tag tag-diocese">Diocese</span></div></li>
+        <li class="priority-item"><div class="priority-num">3</div><div class="priority-text">Make intentional contact with 4–5 parishioners (visits, coffee, notes) <span class="priority-tag tag-parish">Parish</span></div></li>
+        <li class="priority-item"><div class="priority-num">4</div><div class="priority-text">Establish new physical wellness rhythm — daily walk or equivalent <span class="priority-tag tag-personal">Personal</span></div></li>
+        <li class="priority-item"><div class="priority-num">5</div><div class="priority-text">Write May rector's letter and Field Guide content; finish overdue magazine articles <span class="priority-tag tag-parish">Parish</span></div></li>
+      </ul>
+    </div>
+    <div class="two-col">
+      <div class="gratitude-box">
+        <div class="gratitude-title">Beginning of Month — Gratitude</div>
+        <div class="gratitude-item">Easter was proclaimed boldly — "The Ground Shook First"</div>
+        <div class="gratitude-item">Holy Week came together despite the server shortage</div>
+        <div class="gratitude-item">The diocese trusts this leadership in the in-between season</div>
+        <div class="gratitude-item" style="color:var(--slate-light); font-style:italic;">To be added at monthly check-in…</div>
+      </div>
+      <div class="card">
+        <div class="card-title">End of Month Reflection (May 31)</div>
+        <div class="notes-area" style="min-height:90px; color:#C0BAB0; font-style:italic;">&nbsp;To be completed at our May 31 check-in…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- THIS WEEK -->
+<div id="tab-week" class="tab-panel">
+  <div class="content">
+    <div class="updated-tag">Last reviewed: May 3, 2026 · Sunday Weekly Planning with Claude</div>
+    <div class="week-header">
+      <div>
+        <div class="week-label">Current Week</div>
+        <div class="week-range">May 3 – May 9, 2026</div>
+      </div>
+      <div class="week-theme">"Steady hands, watchful heart."</div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-sym">•</span> Task</div>
+      <div class="legend-item"><span class="legend-sym">○</span> Event / Meeting</div>
+      <div class="legend-item"><span class="legend-sym">–</span> Note</div>
+      <div class="legend-item"><span class="legend-sym">✦</span> Priority</div>
+      <div class="legend-item"><span class="legend-sym">→</span> Migrated forward</div>
+      <div class="legend-item"><span class="legend-sym">!</span> Urgent</div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">✦ Top 3 This Week</div>
+        <ul class="priorities-list">
+          <li class="priority-item"><div class="priority-num">1</div><div class="priority-text">May 7 SC cluster — bring decisions on Convention to-do's (Theme/Verse/Image, Nominations, Credentials, Resolutions, Dispatch of Business, Chaplain, Youth Delegates) + Bishop Search Council 5/6 + Meet with +Doug 5/7 <span class="priority-tag tag-diocese">Diocese</span></div></li>
+          <li class="priority-item"><div class="priority-num">2</div><div class="priority-text">Pastoral care for Courtney & Bryan — protect their kids; carry the situation prayerfully through the week, time a check-in <span class="priority-tag tag-family">Pastoral</span></div></li>
+          <li class="priority-item"><div class="priority-num">3</div><div class="priority-text">Summer Worship Planning kickoff with Kevin + draft Ascension (5/17) sermon outline; line up Pentecost (5/24) <span class="priority-tag tag-parish">Parish</span></div></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title">Soul Care Intentions This Week</div>
+        <div class="intention-row"><div class="intention-symbol">✝</div><div><div class="intention-text">Daily Office before email opens each morning</div></div></div>
+        <div class="intention-row"><div class="intention-symbol teal">📖</div><div><div class="intention-text">Cassian's <em>Conferences</em> in Thursday's protected Study Block (1–4 PM WFH)</div></div></div>
+        <div class="intention-row"><div class="intention-symbol gold">&#127968;</div><div><div class="intention-text">Mother's Day Saturday (Othello, 4:30 PM) — be present with Vanessa, not just logistics</div></div></div>
+        <div class="intention-row"><div class="intention-symbol slate">🤐</div><div><div class="intention-text">Watchfulness from this morning's examen — fewer, more meaningful conversations (nepsis)</div></div></div>
+        <div class="intention-row"><div class="intention-symbol">🛋</div><div><div class="intention-text">Counseling Friday at Cornerstone — show up open</div></div></div>
+      </div>
+    </div>
+    <div class="section-header">
+      <div class="section-dot teal"></div>
+      <div class="section-title teal">Rapid Log — Tasks & Meetings</div>
+    </div>
+    <div class="card">
+      <ul class="checklist" id="rapid-log-list">
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-1"><span>! Send Milt Bauer's SW update copy to Noelle for 5/10 Mother's Day handout (per Noelle 4/29 ask)</span></li>
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-2"><span>• Convention prep — review Rules of Order + Canons; build decision matrix for May 7 SC meeting</span></li>
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-3"><span>○ Capital Campaign Mtg — Mon 5/4, 6 PM, Youth Room (John Kinmonth)</span></li>
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-4"><span>○ Bishop Search Council prep — Wed 5/6, 3 PM Sarah & Rebecca (petition process)</span></li>
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-5"><span>○ Meet w/ +Doug — Thu 5/7, 9 AM — prep agenda</span></li>
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-6"><span>• Summer Worship Planning kickoff with Kevin (1:1 this week)</span></li>
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-7"><span>• Ascension sermon outline (5/17) + begin Pentecost (5/24) framing</span></li>
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-8"><span>• Pastoral plan for Courtney & Bryan — when/how to make contact this week</span></li>
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-9"><span>• Reply to Beckie O'Neal — nursery hours / Recovery childcare brainstorm</span></li>
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-10"><span>• Choose Mother's Day prayer for 5/10 bulletin (Noelle sent two options)</span></li>
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-11"><span>• Patti Arey — request letter of transfer from Christ Episcopal PVB (ASAP)</span></li>
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-12"><span>• Approve Lauren's PTO: May 28 – June 1 (Cincy/Chicago)</span></li>
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-13"><span>○ Mother's Day Dinner — Sat 5/9, 4:30 PM, Othello, JAX (with Vanessa)</span></li>
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-14"><span>• Vestry prep — May 17 meeting materials begin draft</span></li>
+        <li class="check-item"><input type="checkbox" class="rapid-checkbox" data-id="rl-w19-15"><span>• Field Guide — finalize overdue submissions w/ Beth Mason</span></li>
+      </ul>
+      <button class="rapid-clear-btn" onclick="clearRapidLog()">Reset all checkboxes</button>
+    </div>
+    <div class="section-header">
+      <div class="section-dot teal"></div>
+      <div class="section-title teal">Calendar at a Glance — May 3 to May 9</div>
+    </div>
+    <div class="card">
+      <ul class="dates-list">
+        <li class="date-item"><span class="date-badge grass">Sun 5/3</span><div><div class="date-info">9:00 AM Clergy Forum · 10:15 AM Senior Celebration & Youth Sunday · 11:30 AM reception</div><div class="date-cat">Parish · Today</div></div></li>
+        <li class="date-item"><span class="date-badge slate">Mon 5/4</span><div><div class="date-info">Sabbath · 9 AM Gym · 6 PM Capital Campaign Mtg (Youth Room) · 7:15 PM pickup Lennox/sailing</div><div class="date-cat">Sabbath · Stewardship</div></div></li>
+        <li class="date-item"><span class="date-badge">Tue 5/5</span><div><div class="date-info">9 AM Mind the Gap (Noelle, Kevin) · 10 AM–12 PM Directors Mtg · 1:30–4:30 PM kids Spanish/transport · 5 PM Gym</div><div class="date-cat">Parish · Family</div></div></li>
+        <li class="date-item"><span class="date-badge teal">Wed 5/6</span><div><div class="date-info">9:30 AM Diocese Weekly Check-In · 2 PM Sr. Warden (Milt) · 3 PM Bishop Search Council (Sarah & Rebecca) · 4 PM Brooklyn Gymnastics · 6 PM Men's Bible Study</div><div class="date-cat">Diocese · High</div></div></li>
+        <li class="date-item"><span class="date-badge teal">Thu 5/7</span><div><div class="date-info">9 AM Meet w/ +Doug · 9–11 AM Writing+Blog (WFH) · 1–4 PM Study Block (WFH, Cassian)</div><div class="date-cat">Diocese · WFH</div></div></li>
+        <li class="date-item"><span class="date-badge">Fri 5/8</span><div><div class="date-info">9 AM Gym · 11 AM Counseling at Cornerstone</div><div class="date-cat">Personal · Soul Care</div></div></li>
+        <li class="date-item"><span class="date-badge gold">Sat 5/9</span><div><div class="date-info">4:30 PM Mother's Day Dinner · Othello, JAX (with Vanessa)</div><div class="date-cat">Family</div></div></li>
+      </ul>
+    </div>
+
+    <div class="section-header">
+      <div class="section-dot slate"></div>
+      <div class="section-title slate">Notes</div>
+    </div>
+    <div style="font-size:12px; color:var(--slate); font-style:italic; margin-bottom:8px;">Type freely throughout the week. Notes auto-save to your browser.</div>
+    <textarea id="week-notes" class="notes-textarea" placeholder="Reflections, observations, sermon ideas, prayers, names to remember, conversations to follow up on…"></textarea>
+    <div class="notes-saved-indicator" id="notes-saved"></div>
+    <div style="margin-top:16px">
+      <div class="prompt-box"><strong>End-of-Week Reflection (Friday)</strong>What moved the needle this week? What needs to migrate forward? Where did I feel most alive? Where did I lose energy?</div>
+    </div>
+
+    <div class="section-header" style="margin-top:32px">
+      <div class="section-dot"></div>
+      <div class="section-title">Archive · Week of April 27 – May 2</div>
+    </div>
+    <details style="background:var(--warm-white); border:1px solid var(--border); border-radius:8px; padding:0;">
+      <summary style="padding:12px 16px; cursor:pointer; font-size:13px; color:var(--slate); font-style:italic;">Show last week's plan</summary>
+      <div style="padding:0 16px 16px;">
+        <div style="margin-top:8px; font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--hunter); font-weight:bold;">Top 3 (last week)</div>
+        <ul class="priorities-list" style="margin-top:6px;">
+          <li class="priority-item"><div class="priority-num">1</div><div class="priority-text">Launch this planning system — internalize the annual/monthly/weekly rhythm</div></li>
+          <li class="priority-item"><div class="priority-num">2</div><div class="priority-text">Draft May sermon arc — Ascension through Pentecost and into Ordinary Time</div></li>
+          <li class="priority-item"><div class="priority-num">3</div><div class="priority-text">Review Standing Committee agenda and May correspondence</div></li>
+        </ul>
+        <div style="margin-top:14px; font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--hunter); font-weight:bold;">Rapid Log (last week)</div>
+        <ul style="list-style:none; margin-top:6px; font-size:13px; color:var(--text-mid); line-height:1.6;">
+          <li>• Connect with Kevin re: May Sunday planning and Pentecost</li>
+          <li>• Send Standing Committee notes / next meeting agenda</li>
+          <li>• Write Pentecost sermon outline</li>
+          <li>• Begin Cassian — 30 min in Thursday study/writing block</li>
+          <li>○ Vestry prep — May meeting materials</li>
+          <li>• Field Guide / May rector's letter — first draft</li>
+          <li>• Schedule intentional time with Vanessa this week</li>
+        </ul>
+        <div style="margin-top:12px; font-size:11px; color:var(--slate-light); font-style:italic;">Last week's checkbox state is preserved in your browser under the original IDs; these items have been migrated to the new week's list above.</div>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- MORNING EXAMEN -->
+<div id="tab-morning" class="tab-panel">
+  <div class="content">
+    <div class="morning-banner">
+      <div>
+        <div class="morning-eyebrow">Daily Morning Examen</div>
+        <div class="morning-title">Begin the Day with Intention</div>
+        <div class="morning-sub">Drawn from the Monk Manual & Full Focus Planner — for daily entry with Claude</div>
+      </div>
+      <div class="morning-date" id="morning-today-date">—</div>
+    </div>
+
+    <div class="em-note" style="background:#F0F8F0; border-color:#C8E0B8; color:#3D5A20;">
+      Today's entry — answer with Claude in chat, or type directly into any field below. Click <strong>Save Today's Entry</strong> to add it to your history. Each day stands alone; you can return tomorrow and start fresh.
+    </div>
+
+    <!-- Today's Entry Form -->
+    <div class="examen-form" id="examen-form">
+      <div class="examen-q">
+        <div class="examen-q-num">1</div>
+        <div class="examen-q-body">
+          <div class="examen-q-label">Anchoring Word or Scripture</div>
+          <div class="examen-q-prompt">What word, verse, or prayer is anchoring you this morning? <em>(Monk Manual: morning sacred text)</em></div>
+          <textarea class="examen-input" id="ex-anchor" rows="2" placeholder="e.g., 'Be still, and know that I am God.' Psalm 46:10"></textarea>
+        </div>
+      </div>
+
+      <div class="examen-q">
+        <div class="examen-q-num">2</div>
+        <div class="examen-q-body">
+          <div class="examen-q-label">Gratitude</div>
+          <div class="examen-q-prompt">Three things you are grateful for as today begins. <em>(Monk Manual: I am grateful for…)</em></div>
+          <textarea class="examen-input" id="ex-gratitude" rows="3" placeholder="1. …&#10;2. …&#10;3. …"></textarea>
+        </div>
+      </div>
+
+      <div class="examen-q">
+        <div class="examen-q-num">3</div>
+        <div class="examen-q-body">
+          <div class="examen-q-label">Today's Big 3</div>
+          <div class="examen-q-prompt">The three most important things you will accomplish today. <em>(Full Focus Planner: Daily Big 3)</em></div>
+          <textarea class="examen-input" id="ex-big3" rows="3" placeholder="1. …&#10;2. …&#10;3. …"></textarea>
+        </div>
+      </div>
+
+      <div class="examen-q">
+        <div class="examen-q-num">4</div>
+        <div class="examen-q-body">
+          <div class="examen-q-label">People on My Heart</div>
+          <div class="examen-q-prompt">Who are you praying for or wanting to encourage today? <em>(Monk Manual: people I'm praying for)</em></div>
+          <textarea class="examen-input" id="ex-people" rows="2" placeholder="Names, families, situations…"></textarea>
+        </div>
+      </div>
+
+      <div class="examen-q">
+        <div class="examen-q-num">5</div>
+        <div class="examen-q-body">
+          <div class="examen-q-label">Looking Forward To</div>
+          <div class="examen-q-prompt">What in today are you most looking forward to? Where will you look for delight? <em>(Monk Manual: I am most looking forward to…)</em></div>
+          <textarea class="examen-input" id="ex-forward" rows="2" placeholder="A conversation, a moment, a meal, a walk…"></textarea>
+        </div>
+      </div>
+
+      <div class="examen-q">
+        <div class="examen-q-num">6</div>
+        <div class="examen-q-body">
+          <div class="examen-q-label">Watchfulness</div>
+          <div class="examen-q-prompt">What pitfall, distraction, or temptation do you want to be alert to today? <em>(Desert tradition: nepsis — vigilance of heart)</em></div>
+          <textarea class="examen-input" id="ex-watchful" rows="2" placeholder="What might pull you off-center today?"></textarea>
+        </div>
+      </div>
+
+      <div class="examen-q">
+        <div class="examen-q-num">7</div>
+        <div class="examen-q-body">
+          <div class="examen-q-label">Body Care</div>
+          <div class="examen-q-prompt">How will you care for your body today — rest, movement, food, breath? <em>(Full Focus Planner: Self-Care ritual)</em></div>
+          <textarea class="examen-input" id="ex-body" rows="2" placeholder="Walk, meal, hydration, sleep target…"></textarea>
+        </div>
+      </div>
+
+      <div class="examen-actions">
+        <button class="todo-add-btn" onclick="saveExamen()">✓ Save Today's Entry</button>
+        <button class="examen-clear-btn" onclick="clearExamen()">Clear Form</button>
+        <span class="examen-status" id="examen-status"></span>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div class="section-header" style="margin-top:32px">
+      <div class="section-dot teal"></div>
+      <div class="section-title teal">Day-to-Day History</div>
+    </div>
+    <div id="examen-history-container">
+      <div class="todo-empty">No entries yet. Save today's entry above to begin.</div>
+    </div>
+  </div>
+</div>
+
+<!-- EVENING EXAMEN -->
+<div id="tab-evening" class="tab-panel">
+  <div class="content">
+    <div class="morning-banner" style="background: linear-gradient(135deg, #1F2D5C 0%, var(--slate) 50%, #4A4A6A 100%);">
+      <div>
+        <div class="morning-eyebrow">Daily Evening Examen</div>
+        <div class="morning-title">Close the Day in God's Presence</div>
+        <div class="morning-sub">Drawn from the Monk Manual & Ignatian Examen — for nightly entry with Claude</div>
+      </div>
+      <div class="morning-date" id="evening-today-date">—</div>
+    </div>
+
+    <div class="em-note" style="background:#F0F0F8; border-color:#C8C8E0; color:#3D3D5A;">
+      Today's evening entry — answer with Claude in chat, or type directly. Click <strong>Save Tonight's Entry</strong> to add it to your history. The four prompts are the same as the Evening Examen reference in your Review tab.
+    </div>
+
+    <div class="examen-form" id="evening-form">
+      <div class="examen-q">
+        <div class="examen-q-num" style="background:var(--slate)">1</div>
+        <div class="examen-q-body">
+          <div class="examen-q-label" style="color:var(--slate)">Gratitude</div>
+          <div class="examen-q-prompt">What am I thankful for today — even one small thing?</div>
+          <textarea class="examen-input" id="ev-gratitude" rows="3" placeholder="Name what was given today…"></textarea>
+        </div>
+      </div>
+
+      <div class="examen-q">
+        <div class="examen-q-num" style="background:var(--slate)">2</div>
+        <div class="examen-q-body">
+          <div class="examen-q-label" style="color:var(--slate)">Consolation</div>
+          <div class="examen-q-prompt">When did I feel most alive, most myself, most connected to God today?</div>
+          <textarea class="examen-input" id="ev-consolation" rows="3" placeholder="The moment, the encounter, the silence…"></textarea>
+        </div>
+      </div>
+
+      <div class="examen-q">
+        <div class="examen-q-num" style="background:var(--slate)">3</div>
+        <div class="examen-q-body">
+          <div class="examen-q-label" style="color:var(--slate)">Desolation</div>
+          <div class="examen-q-prompt">When did I feel depleted, resistant, or disconnected? What triggered it?</div>
+          <textarea class="examen-input" id="ev-desolation" rows="3" placeholder="The drain, the friction, the avoidance…"></textarea>
+        </div>
+      </div>
+
+      <div class="examen-q">
+        <div class="examen-q-num" style="background:var(--slate)">4</div>
+        <div class="examen-q-body">
+          <div class="examen-q-label" style="color:var(--slate)">Tomorrow</div>
+          <div class="examen-q-prompt">What is one thing I want to bring into tomorrow with greater intention?</div>
+          <textarea class="examen-input" id="ev-tomorrow" rows="2" placeholder="A practice, a presence, a posture…"></textarea>
+        </div>
+      </div>
+
+      <div class="examen-actions">
+        <button class="todo-add-btn" style="background:var(--slate)" onclick="saveEvening()">✓ Save Tonight's Entry</button>
+        <button class="examen-clear-btn" onclick="clearEvening()">Clear Form</button>
+        <span class="examen-status" id="evening-status"></span>
+      </div>
+    </div>
+
+    <div class="section-header" style="margin-top:32px">
+      <div class="section-dot slate"></div>
+      <div class="section-title slate">Day-to-Day History</div>
+    </div>
+    <div id="evening-history-container">
+      <div class="todo-empty">No entries yet. Save tonight's entry above to begin.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TO-DO -->
+<div id="tab-todo" class="tab-panel">
+  <div class="content">
+    <div class="updated-tag" id="todo-updated-tag">Last updated: April 30, 2026 (expanded May to-do list)</div>
+
+    <div class="high-priority-banner">
+      <span style="font-size:18px">★</span>
+      <span>Click the <strong>star</strong> on any item to toggle high priority. High-priority items appear at the top of the list.</span>
+    </div>
+
+    <!-- Add new task -->
+    <div class="todo-add-row">
+      <input type="text" class="todo-add-input" id="todo-new-text" placeholder="Add a new task…" onkeydown="if(event.key==='Enter')addTodo()">
+      <select class="todo-add-select" id="todo-new-tag">
+        <option value="parish">Parish</option>
+        <option value="diocese">Diocese</option>
+        <option value="personal">Personal</option>
+        <option value="family">Family</option>
+        <option value="general">General</option>
+      </select>
+      <button class="todo-add-btn" onclick="addTodo()">+ Add</button>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="todo-toolbar">
+      <button class="todo-filter-btn active" onclick="setFilter('all',this)">All <span class="todo-count-badge dark" id="cnt-all">0</span></button>
+      <button class="todo-filter-btn" onclick="setFilter('high',this)">★ High Priority <span class="todo-count-badge dark" id="cnt-high">0</span></button>
+      <button class="todo-filter-btn" onclick="setFilter('parish',this)">Parish <span class="todo-count-badge dark" id="cnt-parish">0</span></button>
+      <button class="todo-filter-btn" onclick="setFilter('diocese',this)">Diocese <span class="todo-count-badge dark" id="cnt-diocese">0</span></button>
+      <button class="todo-filter-btn" onclick="setFilter('personal',this)">Personal <span class="todo-count-badge dark" id="cnt-personal">0</span></button>
+    </div>
+
+    <div id="todo-list-container"></div>
+  </div>
+</div>
+
+<!-- KEY RELATIONSHIPS -->
+<div id="tab-relationships" class="tab-panel">
+  <div class="content">
+    <div class="updated-tag">Last reviewed: April 24, 2026</div>
+    <div class="em-note">"The soul grows by encounter." — Martin Buber &nbsp;|&nbsp; Aim for intentional contact with people in each category every month. A note, a coffee, a phone call — it counts.</div>
+
+    <div class="section-header">
+      <div class="section-dot slate"></div>
+      <div class="section-title">Staff Team — Weekly Presence</div>
+    </div>
+    <div class="card">
+      <table class="rel-table">
+        <thead><tr><th>Name</th><th>Role</th><th>Rhythm</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Kevin</strong></td><td>Associate Pastor</td><td>Weekly 1:1</td><td><span class="rel-category cat-staff">Staff</span> Core ministry partner — protect this meeting</td></tr>
+          <tr><td><strong>Mark</strong></td><td>Deacon</td><td>Weekly check-in</td><td><span class="rel-category cat-staff">Staff</span> Pastoral care coordination</td></tr>
+          <tr><td><strong>Bp. Santosh</strong></td><td>Bishop in Residence</td><td>As needed</td><td><span class="rel-category cat-staff">Staff</span> Episcopal support & governance counsel</td></tr>
+          <tr><td><strong>Joshua Sewell</strong></td><td>Choral Director</td><td>Monthly</td><td><span class="rel-category cat-staff">Staff</span> Music ministry — stay aligned</td></tr>
+          <tr><td><strong>Richard Carby</strong></td><td>Facilities</td><td>As needed</td><td><span class="rel-category cat-staff">Staff</span> Building & maintenance</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-header">
+      <div class="section-dot teal"></div>
+      <div class="section-title teal">Parishioners to Prioritize — May</div>
+    </div>
+    <div class="card">
+      <div style="font-size:13px; color:var(--slate); font-style:italic; margin-bottom:12px;">Updated at each monthly check-in. Aim for 4–6 intentional pastoral connections per month.</div>
+      <table class="rel-table">
+        <thead><tr><th>Name</th><th>Reason for Priority</th><th>Mode</th><th>Done?</th></tr></thead>
+        <tbody>
+          <tr><td colspan="4" style="color:var(--slate-light); font-style:italic;">To be populated at our May 1 check-in…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-header">
+      <div class="section-dot grass"></div>
+      <div class="section-title">Diocese — Key Contacts</div>
+    </div>
+    <div class="card">
+      <table class="rel-table">
+        <thead><tr><th>Name / Group</th><th>Context</th><th>Priority This Month</th></tr></thead>
+        <tbody>
+          <tr><td>Standing Committee Members</td><td>Governance body I lead as EC Authority</td><td><span class="rel-category cat-diocese">High</span> Monthly meeting + prep</td></tr>
+          <tr><td>Assisting Bishops</td><td>Episcopal coverage during transition</td><td><span class="rel-category cat-diocese">Medium</span> Coordinate as needed</td></tr>
+          <tr><td>John Currington</td><td>Council — ongoing pastoral sensitivity</td><td><span class="rel-category cat-diocese">Watch</span> Handle with pastoral care</td></tr>
+          <tr><td>Clergy in transition / distress</td><td>Pastoral & canonical oversight</td><td><span class="rel-category cat-diocese">As Needed</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-header">
+      <div class="section-dot gold"></div>
+      <div class="section-title">Personal — People Who Restore Me</div>
+    </div>
+    <div class="two-col">
+      <div class="gratitude-box">
+        <div class="gratitude-title">Reach Out This Month</div>
+        <div class="gratitude-item">Vanessa — intentional date or conversation, not logistics</div>
+        <div class="gratitude-item">A trusted clergy colleague — peer care call</div>
+        <div class="gratitude-item">Spiritual director — scheduled session</div>
+        <div class="gratitude-item" style="color:var(--slate-light); font-style:italic;">Add names at check-in…</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Notes from Meaningful Conversations</div>
+        <div class="notes-area" style="min-height:90px; color:#C0BAB0; font-style:italic;">&nbsp;Log meaningful exchanges at weekly check-in…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW PROMPTS -->
+<div id="tab-review" class="tab-panel">
+  <div class="content">
+    <div class="updated-tag">Reference guide — use at each check-in with Claude</div>
+
+    <div class="section-header">
+      <div class="section-dot"></div>
+      <div class="section-title">Weekly Check-In — Monday Morning</div>
+    </div>
+    <div class="prompt-box"><strong>Open in Prayer</strong>Lord, what is mine to carry this week? What am I being invited to release?</div>
+    <div class="prompt-box"><strong>Review Last Week</strong>What did I accomplish? What migrates forward? Where did I lose energy unnecessarily?</div>
+    <div class="prompt-box"><strong>Prioritize</strong>What are my Top 3 this week — across Soul, Parish, Diocese, Family?</div>
+    <div class="prompt-box"><strong>Relationships</strong>Who do I need to reach out to? Who is on my heart? Who have I been avoiding?</div>
+    <div class="prompt-box"><strong>Protect</strong>What will I protect this week — Sabbath, family evening, study block, physical health?</div>
+
+    <div class="section-header" style="margin-top:28px">
+      <div class="section-dot teal"></div>
+      <div class="section-title teal">Monthly Check-In — First Monday of Each Month</div>
+    </div>
+    <div class="prompt-box"><strong>Gratitude</strong>What am I most grateful for from last month?</div>
+    <div class="prompt-box"><strong>Wins</strong>What moved? What was accomplished — even quietly?</div>
+    <div class="prompt-box"><strong>Grief</strong>What didn't happen that I hoped would? What do I need to let go of?</div>
+    <div class="prompt-box"><strong>Relationships</strong>Who did I connect with well? Who have I neglected?</div>
+    <div class="prompt-box"><strong>Soul</strong>How is my interior life? Am I drawing from the well or running dry?</div>
+    <div class="prompt-box"><strong>Intentions</strong>What is my word for this new month? What are my top 5 priorities?</div>
+    <div class="prompt-box"><strong>Body</strong>How is my physical health and energy? What needs attention?</div>
+
+    <div class="section-header" style="margin-top:28px">
+      <div class="section-dot slate"></div>
+      <div class="section-title slate">Annual Review — Year End / New Year</div>
+    </div>
+    <div class="prompt-box"><strong>The Year in Three Words</strong>If I had to name this year in three words, what would they be?</div>
+    <div class="prompt-box"><strong>Greatest Gift</strong>What was the single greatest gift of this year — expected or unexpected?</div>
+    <div class="prompt-box"><strong>Hardest Thing</strong>What was the hardest thing I walked through? What did it teach me?</div>
+    <div class="prompt-box"><strong>Who Shaped Me</strong>Who most influenced my growth, faith, or ministry this year?</div>
+    <div class="prompt-box"><strong>What to Carry Forward</strong>What practices, relationships, or commitments do I want to strengthen in the new year?</div>
+    <div class="prompt-box"><strong>Word for the New Year</strong>What one word will anchor the coming year? What Scripture grounds it?</div>
+
+    <div class="section-header" style="margin-top:28px">
+      <div class="section-dot gold"></div>
+      <div class="section-title">Evening Examen — Monk Manual Inspired</div>
+    </div>
+    <div class="prompt-box"><strong>Gratitude</strong>What am I thankful for today — even one small thing?</div>
+    <div class="prompt-box"><strong>Consolation</strong>When did I feel most alive, most myself, most connected to God today?</div>
+    <div class="prompt-box"><strong>Desolation</strong>When did I feel depleted, resistant, or disconnected? What triggered it?</div>
+    <div class="prompt-box"><strong>Tomorrow</strong>What is one thing I want to bring into tomorrow with greater intention?</div>
+  </div>
+</div>
+
+<div class="artifact-footer">
+  St. Francis in-the-Field · Rule of Life Planner · Revisited with Claude at the start of each week and month<br>
+  Inspired by the Monk Manual &amp; Bullet Journal · Est. April 2026
+</div>
+
+<script>
+// ── SEED DATA ──
+const SEED_TODOS = [
+  // ── FAMILY ──
+  { id: 'fam-1', text: 'Take the kids to get flowers and make Mother\'s Day cards for Vanessa', tag: 'family', priority: true, done: false, added: '2026-04-30' },
+  { id: 'fam-2', text: 'One intentional date or conversation with Vanessa — not logistics', tag: 'family', priority: true, done: false, added: '2026-04-30' },
+  { id: 'fam-3', text: 'Mother\'s Day Dinner — Othello, Jacksonville (May 9, 4:30 PM)', tag: 'family', priority: false, done: false, added: '2026-04-30' },
+  { id: 'fam-4', text: 'Beetle Juice Musical with family — Moran Theater, May 14', tag: 'family', priority: false, done: false, added: '2026-04-30' },
+
+  // ── MAGAZINE / JUNE NEWSLETTER (Beth Mason — written content due May 1) ──
+  { id: 'mag-1', text: 'Letter from Rector — theme: "creating space for presence"', tag: 'parish', priority: true, done: false, added: '2026-04-30' },
+  { id: 'mag-2', text: 'Vestry piece: work with someone to write the article about the school', tag: 'parish', priority: true, done: false, added: '2026-04-30' },
+  { id: 'mag-3', text: 'Connect Rayanne with Dustin and Beth (per Beth\'s 3/26 ask)', tag: 'parish', priority: true, done: false, added: '2026-04-30' },
+  { id: 'mag-4', text: 'Connect photographer with Beth and Dustin', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+  { id: 'mag-5', text: 'With Janet Kowalski: tweak Viewfinder piece to include "space for presence"', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+  { id: 'mag-6', text: 'With Janet: plan piece about families baptized in April', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+  { id: 'mag-7', text: 'With Janet: History piece — memorialize the ruins, look forward to the school', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+  { id: 'mag-8', text: 'Send overdue magazine submissions (promised early next week per 4/30 "Late" note)', tag: 'parish', priority: true, done: false, added: '2026-04-30' },
+  { id: 'mag-9', text: 'Discuss placeholder pages with Beth/team for last-minute event additions', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+
+  // ── PARISH — STAFF / TEAMS ACTION ITEMS ──
+  { id: 'par-1', text: 'Send Milt Bauer\'s monthly Sr. Warden update copy to Noelle for 5/10 Mother\'s Day handout', tag: 'parish', priority: true, done: false, added: '2026-04-30' },
+  { id: 'par-2', text: 'Prep Vestry Meeting materials for May 17 (rector\'s report, Holy Week debrief, May/June calendar)', tag: 'parish', priority: true, done: false, added: '2026-04-30' },
+  { id: 'par-3', text: 'Sermon prep arc — Sr/Youth Sun May 3, Ascension May 17, Pentecost May 24, Trinity May 31', tag: 'parish', priority: true, done: false, added: '2026-04-30' },
+  { id: 'par-4', text: 'Reply to Ilya re: Kingsminster name — second line "Episcopal School" same color/branding', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+  { id: 'par-5', text: 'Decide & message Noelle on whether to keep the campus map artwork', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+  { id: 'par-6', text: 'Tara as Music Director announcement — bio, photo, welcome from Justin/Kevin (await travel return)', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+  { id: 'par-7', text: 'Reply to Lauren on website branded graphics — Field Life Crew, Kids, Nursery, Recovery, Foundation', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+  { id: 'par-8', text: 'Approve $231.75 Happenings reimbursement from Reynolds Camp Weed scholarship discretionary (Carrie Lynn)', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+  { id: 'par-9', text: 'Confirm Healing & Reconciliation for Delegates event details/registration with Jeni', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+  { id: 'par-10', text: 'Review Noelle\'s vestry items list (Teams 4/29) — decide if separate channel needed', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+  { id: 'par-11', text: 'Record Welcome Video for newcomers page', tag: 'parish', priority: false, done: false, added: '2026-04-27' },
+  { id: 'par-12', text: 'Talk to Paul Witham about working here', tag: 'parish', priority: false, done: false, added: '2026-04-27' },
+  { id: 'par-13', text: 'Capital Campaign Meeting prep — May 4, 6 PM with John Kinmonth', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+  { id: 'par-14', text: 'Troop 23 Court of Honor opening prayer — May 18 (Ronan rank-up to Tenderfoot)', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+  { id: 'par-15', text: 'VBS Planning prep for May 26 staff meeting', tag: 'parish', priority: false, done: false, added: '2026-04-30' },
+
+  // ── DIOCESE / STANDING COMMITTEE / BISHOP SEARCH ──
+  { id: 'sc-1', text: 'Prep for Sarah Stonesifer-Boylan & Rebecca Bishop Search call — May 6, 3 PM (petition process planning)', tag: 'diocese', priority: true, done: false, added: '2026-04-30' },
+  { id: 'sc-2', text: 'Wait for Courtland\'s direct contact about who approached him re: Dean Kate (Carolyn notifying)', tag: 'diocese', priority: true, done: false, added: '2026-04-30' },
+  { id: 'sc-3', text: 'SC follow-up with any reported confidentiality contacts (per 4/30 protocol)', tag: 'diocese', priority: true, done: false, added: '2026-04-30' },
+  { id: 'sc-4', text: 'Send Keith Daw the Assisting Priest LOA dissolution language', tag: 'diocese', priority: false, done: false, added: '2026-04-30' },
+  { id: 'sc-5', text: 'Confirm Exec Team Meeting weekday slot (Rachael open Wed 12–1 / Th–Fr 12–2)', tag: 'diocese', priority: false, done: false, added: '2026-04-30' },
+  { id: 'sc-6', text: 'Prep agenda for Meet with +Doug — May 7, 9 AM', tag: 'diocese', priority: false, done: false, added: '2026-04-30' },
+  { id: 'sc-7', text: 'Prep notes for SC Presidents Network Inaugural — May 19, 7:30 PM', tag: 'diocese', priority: false, done: false, added: '2026-04-30' },
+  { id: 'sc-8', text: 'Follow up with Liz Collins and SC re: William Stokes appointment (after she talks to him)', tag: 'diocese', priority: false, done: false, added: '2026-04-30' },
+  { id: 'sc-9', text: 'Follow up with search committee on psychologists used for evaluations', tag: 'diocese', priority: false, done: false, added: '2026-04-27' },
+  { id: 'sc-10', text: 'Follow up with Ilya about school (separate from Kingsminster reply)', tag: 'diocese', priority: false, done: false, added: '2026-04-27' },
+  { id: 'sc-11', text: 'Pastoral note re: passing of Rev. Canon Lance Horne (April 28)', tag: 'diocese', priority: false, done: false, added: '2026-04-30' },
+  { id: 'sc-12', text: 'Pastoral note for Rev. Leslie Roraback\'s family (St. Paul\'s in the Pines, Fayetteville)', tag: 'diocese', priority: false, done: false, added: '2026-04-30' },
+
+  // ── ADMINISTRATIVE / OUTSIDE COMMITMENTS ──
+  { id: 'adm-1', text: 'Complete & return W-9 (first page) to Pam Searcy / St. John\'s Cathedral for St. George\'s Evensong honorarium', tag: 'general', priority: false, done: false, added: '2026-04-30' },
+  { id: 'adm-2', text: 'Decide on Microsoft Cloud Subscription renewal (TechSoup — may already be auto-renewed)', tag: 'general', priority: false, done: false, added: '2026-04-30' },
+
+  // ── SOUL / PERSONAL ──
+  { id: 'soul-1', text: 'Begin Cassian\'s Conferences — 30 min weekly in Thursday study block', tag: 'personal', priority: false, done: false, added: '2026-04-30' },
+  { id: 'soul-2', text: 'Publish first "From the Well" post of May (Resurrection / Pentecost theme)', tag: 'personal', priority: false, done: false, added: '2026-04-30' },
+  { id: 'soul-3', text: 'Restart 20-minute morning walk rhythm', tag: 'personal', priority: false, done: false, added: '2026-04-30' },
+
+  // ── WEEKLY PLAN PULL — May 3-9 (email + Teams sweep) ──
+  { id: 'wk19-1', text: 'Reply to Beckie O\'Neal — nursery worker hourly rate increase + childcare for Recovery & other activities (brainstorm together)', tag: 'parish', priority: false, done: false, added: '2026-05-03' },
+  { id: 'wk19-2', text: 'Patti Arey — request letter of transfer from Christ Episcopal Church PVB (ASAP, per 4/30 Teams)', tag: 'parish', priority: true, done: false, added: '2026-05-03' },
+  { id: 'wk19-3', text: 'Approve Lauren\'s PTO: May 28 – June 1 (Cincy/Chicago to move Nash home for summer); reply to her', tag: 'parish', priority: false, done: false, added: '2026-05-03' },
+  { id: 'wk19-4', text: 'Mother\'s Day prayer/POP for 5/10 bulletin — choose between Noelle\'s 4/28 options (last year\'s prayer vs. Rev. Rick Morley POP)', tag: 'parish', priority: true, done: false, added: '2026-05-03' },
+  { id: 'wk19-5', text: 'Pastoral plan for Lindsay\'s upcoming surgery — coordinate with Noelle on staff support for her & Josh', tag: 'parish', priority: true, done: false, added: '2026-05-03' },
+  { id: 'wk19-6', text: 'Sanctuary A/C filter situation — wait 1-2 days for Milt Bauer\'s confirmation, then loop in Dan', tag: 'parish', priority: false, done: false, added: '2026-05-03' },
+  { id: 'wk19-7', text: 'Capital Campaign survey — feedback to Jackie sent 5/2; review final draft before it goes to vestry officers + Jackie', tag: 'parish', priority: false, done: false, added: '2026-05-03' },
+  { id: 'wk19-8', text: 'Realm bounceback — no-reply@onrealmmail.org address invalid; investigate & fix distribution', tag: 'general', priority: false, done: false, added: '2026-05-03' },
+  { id: 'wk19-9', text: 'Easy Text Marketing AppSumo deal — review with Communications team & decide (Noelle 5/1 ask)', tag: 'parish', priority: false, done: false, added: '2026-05-03' },
+  { id: 'wk19-10', text: 'Pastoral plan: Courtney & Bryan — when/how to make contact this week (protect their kids)', tag: 'family', priority: true, done: false, added: '2026-05-03' },
+  { id: 'wk19-11', text: 'Summer Worship Planning — schedule kickoff with Kevin (Mon-Wed); decide format/scope', tag: 'parish', priority: true, done: false, added: '2026-05-03' },
+  { id: 'wk19-12', text: 'Bob — finalize statement (sent 5/2 with questions); follow up on his replies', tag: 'parish', priority: false, done: false, added: '2026-05-03' },
+  { id: 'wk19-13', text: 'Safeguarding Policies — follow up with Chris on review/approval (sent 5/1)', tag: 'parish', priority: false, done: false, added: '2026-05-03' },
+  { id: 'wk19-14', text: 'Charlie\'s 2nd check — confirm pickup with Carrie Lynn (was on Jeni\'s desk for Sunday)', tag: 'parish', priority: false, done: false, added: '2026-05-03' },
+
+  // ── CONVENTION PREP — May 7 SC Meeting (Keith Daw email, fwd 5/3) ──
+  { id: 'conv-1', text: '⚑ CONVENTION PREP — Decisions to make at May 7 SC Meeting (per Keith Daw 4/30 email)', tag: 'diocese', priority: true, done: false, added: '2026-05-03' },
+  { id: 'conv-1a', text: '↳ Finalize Convention Theme, Verse & Image — review Fr. Bob\'s suggestions and Mtr. Lisa\'s reactions; commission image', tag: 'diocese', priority: true, done: false, added: '2026-05-03' },
+  { id: 'conv-1b', text: '↳ Appoint Nominations Chair(s) — 2 clergy from different regions / theological leanings, who then pick 3 more (1 from each remaining region)', tag: 'diocese', priority: true, done: false, added: '2026-05-03' },
+  { id: 'conv-1c', text: '↳ Appoint Credentials Chair / Committee — critical for opening, flow, and voting on bishop election day (see Rules of Order)', tag: 'diocese', priority: true, done: false, added: '2026-05-03' },
+  { id: 'conv-1d', text: '↳ Appoint Resolutions Chair / Committee (per Rules of Order)', tag: 'diocese', priority: true, done: false, added: '2026-05-03' },
+  { id: 'conv-1e', text: '↳ Appoint Dispatch of Business — single person to present agenda for convention adoption', tag: 'diocese', priority: true, done: false, added: '2026-05-03' },
+  { id: 'conv-1f', text: '↳ Appoint Convention Chaplain (Mtr. Rachel Hill set the bar in 2025)', tag: 'diocese', priority: true, done: false, added: '2026-05-03' },
+  { id: 'conv-1g', text: '↳ Appoint Youth Delegates lead SC member(s) — coordinate with Deanna on recruitment & selection', tag: 'diocese', priority: true, done: false, added: '2026-05-03' },
+];
+
+const LS_KEY = 'rol-todos-v3';
+let activeFilter = 'all';
+
+function loadTodos() {
+  let stored = null;
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) stored = JSON.parse(raw);
+  } catch(e) {}
+  if (!stored) {
+    // First load — seed
+    const seeded = JSON.parse(JSON.stringify(SEED_TODOS));
+    saveTodos(seeded);
+    return seeded;
+  }
+  // Merge: keep all existing user edits, add any new seed items not already present (by id).
+  // This lets newly added seed entries (e.g., Convention prep tasks) appear without overwriting your edits.
+  const seenIds = new Set(stored.map(t => t.id));
+  let added = false;
+  SEED_TODOS.forEach(seed => {
+    if (!seenIds.has(seed.id)) {
+      stored.unshift(JSON.parse(JSON.stringify(seed)));
+      added = true;
+    }
+  });
+  if (added) saveTodos(stored);
+  return stored;
+}
+
+function saveTodos(todos) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(todos)); } catch(e) {}
+}
+
+function getTodos() {
+  return loadTodos();
+}
+
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.todo-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTodos();
+}
+
+function addTodo() {
+  const input = document.getElementById('todo-new-text');
+  const tag = document.getElementById('todo-new-tag').value;
+  const text = input.value.trim();
+  if (!text) { input.focus(); return; }
+  const todos = getTodos();
+  todos.unshift({
+    id: 'todo-' + Date.now(),
+    text, tag,
+    priority: false,
+    done: false,
+    added: new Date().toISOString().slice(0,10)
+  });
+  saveTodos(todos);
+  input.value = '';
+  renderTodos();
+  input.focus();
+}
+
+function toggleDone(id) {
+  const todos = getTodos();
+  const t = todos.find(x => x.id === id);
+  if (t) t.done = !t.done;
+  saveTodos(todos);
+  renderTodos();
+}
+
+function togglePriority(id) {
+  const todos = getTodos();
+  const t = todos.find(x => x.id === id);
+  if (t) t.priority = !t.priority;
+  saveTodos(todos);
+  renderTodos();
+}
+
+function deleteTodo(id) {
+  let todos = getTodos();
+  todos = todos.filter(x => x.id !== id);
+  saveTodos(todos);
+  renderTodos();
+}
+
+function tagLabel(tag) {
+  const map = { parish:'Parish', diocese:'Diocese', personal:'Personal', family:'Family', general:'General' };
+  return map[tag] || tag;
+}
+
+function renderTodos() {
+  const todos = getTodos();
+
+  // Update counts
+  const active = todos.filter(t => !t.done);
+  document.getElementById('cnt-all').textContent = active.length;
+  document.getElementById('cnt-high').textContent = active.filter(t => t.priority).length;
+  document.getElementById('cnt-parish').textContent = active.filter(t => t.tag === 'parish').length;
+  document.getElementById('cnt-diocese').textContent = active.filter(t => t.tag === 'diocese').length;
+  document.getElementById('cnt-personal').textContent = active.filter(t => t.tag === 'personal').length;
+
+  // Filter
+  let visible = todos.filter(t => {
+    if (activeFilter === 'all') return true;
+    if (activeFilter === 'high') return t.priority && !t.done;
+    return t.tag === activeFilter;
+  });
+
+  // Sort: high priority first, then by added date desc
+  const pending = visible.filter(t => !t.done).sort((a,b) => {
+    if (a.priority && !b.priority) return -1;
+    if (!a.priority && b.priority) return 1;
+    return b.id.localeCompare(a.id);
+  });
+  const done = visible.filter(t => t.done);
+
+  const container = document.getElementById('todo-list-container');
+
+  if (pending.length === 0 && done.length === 0) {
+    container.innerHTML = '<div class="todo-empty">No tasks here. Add one above or change your filter.</div>';
+    return;
+  }
+
+  let html = '';
+
+  if (pending.length > 0) {
+    html += '<ul class="todo-list">';
+    pending.forEach(t => {
+      html += renderTodoItem(t);
+    });
+    html += '</ul>';
+  }
+
+  if (done.length > 0) {
+    html += '<div class="todo-completed-toggle" onclick="toggleCompletedSection(this)">▸ Show ' + done.length + ' completed item' + (done.length !== 1 ? 's' : '') + '</div>';
+    html += '<ul class="todo-list" id="completed-section" style="display:none">';
+    done.forEach(t => {
+      html += renderTodoItem(t);
+    });
+    html += '</ul>';
+  }
+
+  container.innerHTML = html;
+}
+
+function renderTodoItem(t) {
+  const starClass = t.priority ? 'priority-star lit' : 'priority-star';
+  const itemClass = 'todo-item' + (t.priority ? ' high-priority' : '') + (t.done ? ' completed' : '');
+  return `<li class="${itemClass}" id="item-${t.id}">
+    <input type="checkbox" class="todo-checkbox" ${t.done ? 'checked' : ''} onchange="toggleDone('${t.id}')">
+    <div class="todo-body">
+      <div class="todo-text">${escHtml(t.text)}</div>
+      <div class="todo-meta">
+        <span class="todo-tag ${t.tag}">${tagLabel(t.tag)}</span>
+        ${t.added ? '<span style="font-size:10px;color:var(--slate-light);font-style:italic;">Added ' + t.added + '</span>' : ''}
+      </div>
+    </div>
+    <span class="${starClass}" title="${t.priority ? 'Remove high priority' : 'Mark high priority'}" onclick="togglePriority('${t.id}')">★</span>
+    <button class="todo-delete" onclick="deleteTodo('${t.id}')" title="Delete task">✕</button>
+  </li>`;
+}
+
+function toggleCompletedSection(el) {
+  const sec = document.getElementById('completed-section');
+  if (!sec) return;
+  if (sec.style.display === 'none') {
+    sec.style.display = 'block';
+    const cnt = sec.querySelectorAll('li').length;
+    el.textContent = '▾ Hide ' + cnt + ' completed item' + (cnt !== 1 ? 's' : '');
+  } else {
+    sec.style.display = 'none';
+    const cnt = sec.querySelectorAll('li').length;
+    el.textContent = '▸ Show ' + cnt + ' completed item' + (cnt !== 1 ? 's' : '');
+  }
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'todo') renderTodos();
+  if (name === 'morning') initMorning();
+  if (name === 'evening') initEvening();
+}
+
+// ── EVENING EXAMEN ──
+const EVENING_KEY = 'rol-evening-v1';
+const EVENING_FIELDS = [
+  { id: 'ev-gratitude',   label: 'Gratitude' },
+  { id: 'ev-consolation', label: 'Consolation' },
+  { id: 'ev-desolation',  label: 'Desolation' },
+  { id: 'ev-tomorrow',    label: 'Tomorrow' }
+];
+const SEED_EVENING_ENTRIES = [
+  {
+    date: '2026-05-02',
+    savedAt: '2026-05-03T01:30:00.000Z',
+    answers: {
+      'ev-gratitude': 'I am thankful for a productive retreat today and a safe trip home.',
+      'ev-consolation': 'I felt most alive while navigating hard questions and also hearing what makes our diocese so special.',
+      'ev-desolation': 'I felt resistant to brush the teeth of the kids. It was so simple, but I was so tired and wanted to sit down for a little longer. I was snappy for no particular reason.',
+      'ev-tomorrow': 'Presence and intention. I want to be present at church while being intentional about moving through the post-church meetings so I can be present with Brooklyn at her flag football game.'
+    },
+    reflection: 'There\'s a quiet symmetry in tonight\'s noticings. The consolation rises in something hard — sitting with diocesan questions that don\'t yield easy answers, while also receiving what makes this place beloved. That\'s an Ignatian movement worth marking: the Spirit often consoles us not by removing the weight but by enlarging the love that bears it. You came alive inside the difficulty, not after it.\n\nThe desolation, by contrast, was small and human — a snappy edge at the toothbrushing hour, the body\'s tax on a long day of travel. The Desert tradition would not call that sin so much as a logismos, a passing thought that catches us when we\'re depleted. Cassian\'s counsel in the Conferences is gentle: notice it, name it, but don\'t let it accuse you. Brooklyn and your other little ones received a tired father tonight; tomorrow they will receive a present one.\n\nWhich is exactly what your tomorrow names: presence and intention. Not to be everywhere, but to be fully where you are — at the altar first, then through the post-church meetings with disciplined kindness, and then on the sideline of a flag football game where holiness will look like a folding chair and your full attention on Brooklyn.\n\nMay your sleep be deep, and may you wake to mercy.'
+  },
+  {
+    date: '2026-05-03',
+    savedAt: '2026-05-04T01:30:00.000Z',
+    answers: {
+      'ev-gratitude': 'My family and our love and connection to one another. Cooking with the kids, specifically introducing them to pizza date night, as Vanessa and I used to call it. Watching Top Chef on the couch. It is really special.',
+      'ev-consolation': 'I really felt most connected to God in two places. First, during Youth Sunday while watching all the young people participate and their enthusiasm. Secondly, when Lennox and Brooklyn came to the rail to receive communion from their dad.',
+      'ev-desolation': 'I just felt tired and I am worried that I did something in my sleep or diet that set me into that moment. Or, I just was sleepy which is also normal.',
+      'ev-tomorrow': 'Really want to bring pause and reflection to my events for tomorrow. Really want to focus on what is in front of me and bring that awareness to the new day.'
+    },
+    reflection: 'Tonight\'s consolations gathered around children. The parish\'s young at Youth Sunday, and your own at the rail. This morning\'s reflection named two fatherhoods, the priestly and the paternal, as a single calling worth holding together; tonight the Spirit answered by bringing them into one set of hands. Lennox and Brooklyn receiving the Body from their dad is the kind of consolation Ignatius would mark with a star: not a feeling manufactured, but a movement given (Spiritual Exercises, §316). The same anchor you named at dawn, John 14, was already preparing this. "In my Father\'s house are many rooms." The altar rail is one of them.\n\nThe desolation you named was a quieter, smaller thing — bodily tiredness whose cause you couldn\'t quite locate. The Desert tradition would not rush to interpret it. Cassian counseled discernment, not anxiety, about the body\'s weather (Conferences I.20). Sometimes weariness is moral, sometimes it is just sleep undone. The grace is that the same day held a pizza-pan ritual with the kids and Top Chef on the couch — a homely table that quietly converts a tired evening into communion of another kind. You were fed there too.\n\nTomorrow\'s intention — pause, reflection, presence to what is in front of you — sits in clean alignment with this morning\'s watchfulness against "unneeded extra conversations." These are the same posture from two angles: the discipline of staying where you actually are. Abba Moses told a brother to sit in his cell and let the cell teach him everything (Apophthegmata Patrum, Moses 6). Your cell tomorrow will be a calendar, but the lesson is the same. May your sleep be deep, and may you wake to mercy.'
+  }
+];
+
+function loadEvening() {
+  let stored = [];
+  try {
+    const raw = localStorage.getItem(EVENING_KEY);
+    if (raw) stored = JSON.parse(raw);
+  } catch(e) {}
+  const seenDates = new Set(stored.map(e => e.date));
+  let added = false;
+  SEED_EVENING_ENTRIES.forEach(seed => {
+    if (!seenDates.has(seed.date)) {
+      stored.push(JSON.parse(JSON.stringify(seed)));
+      added = true;
+    }
+  });
+  stored.sort((a,b) => b.date.localeCompare(a.date));
+  if (added) saveEveningStore(stored);
+  return stored;
+}
+
+function saveEveningStore(entries) {
+  try { localStorage.setItem(EVENING_KEY, JSON.stringify(entries)); } catch(e) {}
+}
+
+function initEvening() {
+  const todayEl = document.getElementById('evening-today-date');
+  if (todayEl) todayEl.textContent = formatPrettyDate(todayISO());
+  const entries = loadEvening();
+  const existing = entries.find(e => e.date === todayISO());
+  if (existing) {
+    EVENING_FIELDS.forEach(f => {
+      const el = document.getElementById(f.id);
+      if (el && existing.answers[f.id]) el.value = existing.answers[f.id];
+    });
+    setEveningStatus("Tonight's entry loaded — edit and Save to update.");
+  }
+  renderEveningHistory();
+}
+
+function setEveningStatus(msg) {
+  const s = document.getElementById('evening-status');
+  if (s) {
+    s.textContent = msg;
+    if (msg) setTimeout(() => { if (s.textContent === msg) s.textContent = ''; }, 4000);
+  }
+}
+
+function saveEvening() {
+  const date = todayISO();
+  const answers = {};
+  EVENING_FIELDS.forEach(f => {
+    const el = document.getElementById(f.id);
+    answers[f.id] = el ? el.value.trim() : '';
+  });
+  const entries = loadEvening();
+  const idx = entries.findIndex(e => e.date === date);
+  const entry = { date, answers, savedAt: new Date().toISOString() };
+  if (idx >= 0) entries[idx] = entry;
+  else entries.unshift(entry);
+  entries.sort((a,b) => b.date.localeCompare(a.date));
+  saveEveningStore(entries);
+  setEveningStatus('✓ Saved.');
+  renderEveningHistory();
+}
+
+function clearEvening() {
+  EVENING_FIELDS.forEach(f => {
+    const el = document.getElementById(f.id);
+    if (el) el.value = '';
+  });
+  setEveningStatus('Form cleared (history is unchanged).');
+}
+
+function deleteEvening(date) {
+  if (!confirm('Delete evening entry for ' + formatPrettyDate(date) + '?')) return;
+  let entries = loadEvening();
+  entries = entries.filter(e => e.date !== date);
+  saveEveningStore(entries);
+  if (date === todayISO()) clearEvening();
+  renderEveningHistory();
+}
+
+function renderEveningHistory() {
+  const container = document.getElementById('evening-history-container');
+  if (!container) return;
+  const entries = loadEvening();
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="todo-empty">No entries yet. Save tonight\'s entry above to begin.</div>';
+    return;
+  }
+  let html = '';
+  entries.forEach(entry => {
+    html += '<div class="examen-history-card" style="border-left-color:var(--slate)">';
+    html += '<div class="examen-history-header">';
+    html += '<div>';
+    html += '<div class="examen-history-date">' + escHtml(formatPrettyDate(entry.date)) + '</div>';
+    if (entry.savedAt) {
+      const t = new Date(entry.savedAt);
+      html += '<div class="examen-history-day">Saved ' + t.toLocaleString('en-US', {hour:'numeric', minute:'2-digit', hour12:true}) + '</div>';
+    }
+    html += '</div>';
+    html += '<button class="examen-history-delete" onclick="deleteEvening(\'' + entry.date + '\')" title="Delete entry">✕</button>';
+    html += '</div>';
+    EVENING_FIELDS.forEach(f => {
+      const ans = (entry.answers && entry.answers[f.id]) || '';
+      if (!ans) return;
+      html += '<div class="examen-history-q">';
+      html += '<div class="examen-history-q-label" style="color:var(--slate)">' + escHtml(f.label) + '</div>';
+      html += '<div class="examen-history-q-text">' + escHtml(ans) + '</div>';
+      html += '</div>';
+    });
+    if (entry.reflection) {
+      html += '<div class="examen-reflection">';
+      html += '<div class="examen-reflection-label">✦ Reflection from Claude</div>';
+      html += '<div class="examen-reflection-text">' + escHtml(entry.reflection) + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+// ── MORNING EXAMEN ──
+const EXAMEN_KEY = 'rol-examen-v2';
+const EXAMEN_FIELDS = [
+  { id: 'ex-anchor',    label: 'Anchoring Word / Scripture' },
+  { id: 'ex-gratitude', label: 'Gratitude' },
+  { id: 'ex-big3',      label: "Today's Big 3" },
+  { id: 'ex-people',    label: 'People on My Heart' },
+  { id: 'ex-forward',   label: 'Looking Forward To' },
+  { id: 'ex-watchful',  label: 'Watchfulness' },
+  { id: 'ex-body',      label: 'Body Care' }
+];
+
+// Seed entries — pre-populated examens from chat sessions with Claude.
+// These load on first open (when no localStorage data exists for the v2 key).
+const SEED_EXAMEN_ENTRIES = [
+  {
+    date: '2026-05-01',
+    savedAt: '2026-05-01T08:00:00.000Z',
+    answers: {
+      'ex-anchor': '1 Chronicles 16:34 (NIV): "Give thanks to the Lord, for he is good; his love endures forever."\n\nThis phrase met me on the morning I finished my Prolon fast — feeling really amazing in the body, and the verse rose as the body\'s own thanksgiving.',
+      'ex-gratitude': '1. Vanessa — for her support that got me through the Prolon fast cleanly, without cheating.\n2. The fast itself, and how I feel in this moment.\n3. The love of my children and the ways they love on me.',
+      'ex-big3': '1. Live into my post-Prolon meal plan — avoid sugar; reinsert vegetables and proteins for dinner.\n2. This evening, work on magazine articles for the upcoming Field Guide edition — capture the baptism stories and write the article.\n3. Continue to walk with Keith and deepen that bond.',
+      'ex-people': 'Nana, Pat Davis, Abigail Lake, Kevin, Noelle, the Vestry, the Parish; Vanessa and Beaches Dermatology (something unfinished there); a smooth future at Aesthetix Plus for Vanessa; the kiddos.',
+      'ex-forward': 'Massage and Reiki with Leona — to walk with her and be present with her. Also: seeing if I can complete this one-night road trip on mostly electric miles in the plug-in hybrid.',
+      'ex-watchful': 'The temptation to eat dirty and eat sweets in the hotel by myself — which would throw away all the work I did. Combat with prayer, scripture, and work. Practical reminder: when the temptation rises, work on Sunday\'s sermon.',
+      'ex-body': 'Massage, stretch, and re-enter slowly into my active life as I increase my calories.'
+    },
+    reflection: 'There is a coherence to today\'s examen worth noticing. Your anchoring text (1 Chronicles 16:34 — "his love endures forever") is the body\'s own thanksgiving after the fast. Your gratitude names Vanessa\'s quiet companionship in that same fast. Your Big 3 begins with continuing the discipline of post-Prolon eating. Your watchfulness names exactly the hotel-room temptation that could undo it — and your remedy isn\'t willpower, it\'s substitution: sermon prep as the alternative to sweets. Cassian writes about this very thing in Conferences — the watchful monk doesn\'t fight a thought, he replaces it with a better one.\n\nThe intercessions are full and tender — Nana, Pat Davis, Abigail Lake, the staff, the Vestry, and the unsettled vocational ground beneath Vanessa\'s feet. That last one rises to the top, I think. Worth holding gently across the day.\n\nMay the road trip\'s quiet hours be a small Sabbath inside the work, and may Leona\'s hands meet a body that has just been remade.'
+  },
+  {
+    date: '2026-05-02',
+    savedAt: '2026-05-02T11:30:00.000Z',
+    answers: {
+      'ex-anchor': 'The Examination of a Bishop in the Book of Common Prayer.',
+      'ex-gratitude': 'The delegates who chose to show up today from the Santa Fe and River Regions.',
+      'ex-big3': 'Be present. Be honest. Be hopeful. Be brief. And: prepare for tomorrow\'s formation class.',
+      'ex-people': 'The Standing Committee and the election of our 9th Bishop. Beaches Dermatology and Summer. Clarity for Vanessa.',
+      'ex-forward': 'A quiet, productive Delegates retreat and a safe trip home.',
+      'ex-watchful': 'Bad food choices. Really need to make good choices today.',
+      'ex-body': 'Keep up the post-Prolon diet.'
+    },
+    reflection: 'The day\'s seven answers hum at one frequency: episcopal vocation. The anchor is the Examination of a Bishop (BCP, p. 517) — the questions a bishop-elect must answer about guarding the faith, unity, and discipline of the Church. The gratitude is for the delegates who will help the Diocese answer those very questions in late 2026. The people on your heart begin with the Standing Committee and the 9th Bishop. Even your Big 3 — present, honest, hopeful, brief — read less like tasks and more like dispositions you would want any bishop-elect to embody in the room you are about to hold.\n\nWhat rises to the top is the discipline of restraint. "Be brief" is its own kind of fast, and it sits in coherent company with the post-Prolon diet and the watchfulness about food. Cassian, in the Institutes (Book V, on gluttony), treats the small discipline of the table as rehearsal for every larger battle the soul will face — the body\'s restraint and the tongue\'s restraint train the same heart. Today\'s temptation may be to over-explain, to manage outcomes, to fill silence. The Examination\'s own questions are answered as much by what you do not say in the retreat as by what you do.\n\nSo: presence over performance. The delegates showed up to be heard; let your brevity be hospitality. Hold Vanessa\'s clarity and the diocese\'s discernment in the same prayer — both are forms of waiting on the Spirit. May the road home be quiet, the table tomorrow well-prepared, and your heart, in the Desert phrase, watchful and unhurried.'
+  },
+  {
+    date: '2026-05-03',
+    savedAt: '2026-05-03T12:00:00.000Z',
+    answers: {
+      'ex-anchor': 'John 14:1-14',
+      'ex-gratitude': 'I am grateful for my seniors and their work within the church. I am grateful for my Standing Committee colleagues. I am grateful for my family and their support, with special emphasis on their love of reading.',
+      'ex-big3': 'Get to Flag Football. Speed up meeting with Eddie and Terry. Visit with Seniors. One last one and this may be the biggest which is keep Courtney and Bryan, who cheated on Courtney, from impacting their kids with their tension.',
+      'ex-people': 'Still praying for Summer at Beaches Dermatology and for clarity around Vanessa and her possible employment at Beaches Dermatology. I am praying for Nana as he prepares to bury her cousin. I am praying for Courtney and Bryan for peace and reconciliation. I am praying for the Lakes that we can find connection again.',
+      'ex-forward': 'Watching Brooklyn pull one flag at her game!! I know she can do it.',
+      'ex-watchful': 'Unneeded extra conversations.',
+      'ex-body': 'Keep the good food choices going.'
+    },
+    reflection: 'It is striking that you anchored yourself this morning in John 14, the passage Jesus speaks precisely because hearts are troubled. The day you described is full of troubled hearts: Courtney and Bryan\'s children caught between their parents\' rupture, Nana walking toward a burial, the Lakes whose connection feels distant, Vanessa standing inside a question about Beaches Dermatology. Before any of that crossed your desk, the Word had already gone before you: "Let not your hearts be troubled... I am the way." Your anchor is doing pastoral work before the day even begins.\n\nWhat rises to the top is children. You named protecting Courtney and Bryan\'s kids from their parents\' tension as the biggest of your Big 3, and the delight you are looking for today is Brooklyn pulling a flag. The same morning holds two fatherhoods: the priestly one, where you stand between other people\'s children and the wreckage of adult choices, and the paternal one, where you simply get to cheer. Hold them together. They are not unrelated callings; one teaches the other.\n\nYour watchfulness, "unneeded extra conversations," is the old Desert wisdom rephrased. Abba Arsenius said he had often regretted his speech but never his silence (Apophthegmata Patrum, Arsenius 40), and Cassian made nepsis, watchfulness of the heart, central to the Christian life (Conferences I.5). The discipline you are naming is not aloofness. It is the conservation of pastoral attention so that the words you do speak today, to the Seniors, to Eddie and Terry, perhaps to Courtney or Bryan, carry the weight they need to carry. May the Lord keep your heart untroubled, your speech sparing, your love wide, and may Brooklyn pull that flag clean off.'
+  }
+];
+
+function todayISO() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2,'0');
+  const da = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${da}`;
+}
+
+function formatPrettyDate(iso) {
+  const [y,m,d] = iso.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  return dt.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+}
+
+function loadExamen() {
+  let stored = [];
+  try {
+    const raw = localStorage.getItem(EXAMEN_KEY);
+    if (raw) stored = JSON.parse(raw);
+  } catch(e) {}
+  // Merge: keep existing localStorage entries (user edits), add any seed entries not already present (by date).
+  // This lets Claude's scheduled morning runs append new days without overwriting your local edits.
+  const seenDates = new Set(stored.map(e => e.date));
+  let added = false;
+  SEED_EXAMEN_ENTRIES.forEach(seed => {
+    if (!seenDates.has(seed.date)) {
+      stored.push(JSON.parse(JSON.stringify(seed)));
+      added = true;
+    }
+  });
+  // Sort newest first
+  stored.sort((a,b) => b.date.localeCompare(a.date));
+  if (added) saveExamenStore(stored);
+  return stored;
+}
+
+function saveExamenStore(entries) {
+  try { localStorage.setItem(EXAMEN_KEY, JSON.stringify(entries)); } catch(e) {}
+}
+
+function initMorning() {
+  // Show today's date prominently
+  const todayEl = document.getElementById('morning-today-date');
+  if (todayEl) todayEl.textContent = formatPrettyDate(todayISO());
+
+  // If today's entry already exists, prefill
+  const entries = loadExamen();
+  const existing = entries.find(e => e.date === todayISO());
+  if (existing) {
+    EXAMEN_FIELDS.forEach(f => {
+      const el = document.getElementById(f.id);
+      if (el && existing.answers[f.id]) el.value = existing.answers[f.id];
+    });
+    setStatus('Today\'s entry loaded — edit and Save to update.');
+  }
+
+  renderExamenHistory();
+}
+
+function setStatus(msg) {
+  const s = document.getElementById('examen-status');
+  if (s) {
+    s.textContent = msg;
+    if (msg) setTimeout(() => { if (s.textContent === msg) s.textContent = ''; }, 4000);
+  }
+}
+
+function saveExamen() {
+  const date = todayISO();
+  const answers = {};
+  EXAMEN_FIELDS.forEach(f => {
+    const el = document.getElementById(f.id);
+    answers[f.id] = el ? el.value.trim() : '';
+  });
+  const entries = loadExamen();
+  const idx = entries.findIndex(e => e.date === date);
+  const entry = { date, answers, savedAt: new Date().toISOString() };
+  if (idx >= 0) entries[idx] = entry;
+  else entries.unshift(entry);
+  // Sort newest first
+  entries.sort((a,b) => b.date.localeCompare(a.date));
+  saveExamenStore(entries);
+  setStatus('✓ Saved.');
+  renderExamenHistory();
+}
+
+function clearExamen() {
+  EXAMEN_FIELDS.forEach(f => {
+    const el = document.getElementById(f.id);
+    if (el) el.value = '';
+  });
+  setStatus('Form cleared (history is unchanged).');
+}
+
+function deleteExamen(date) {
+  if (!confirm('Delete examen entry for ' + formatPrettyDate(date) + '?')) return;
+  let entries = loadExamen();
+  entries = entries.filter(e => e.date !== date);
+  saveExamenStore(entries);
+  // If we deleted today, clear the form too
+  if (date === todayISO()) clearExamen();
+  renderExamenHistory();
+}
+
+function renderExamenHistory() {
+  const container = document.getElementById('examen-history-container');
+  if (!container) return;
+  const entries = loadExamen();
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="todo-empty">No entries yet. Save today\'s entry above to begin.</div>';
+    return;
+  }
+  let html = '';
+  entries.forEach(entry => {
+    html += '<div class="examen-history-card">';
+    html += '<div class="examen-history-header">';
+    html += '<div>';
+    html += '<div class="examen-history-date">' + escHtml(formatPrettyDate(entry.date)) + '</div>';
+    if (entry.savedAt) {
+      const t = new Date(entry.savedAt);
+      html += '<div class="examen-history-day">Saved ' + t.toLocaleString('en-US', {hour:'numeric', minute:'2-digit', hour12:true}) + '</div>';
+    }
+    html += '</div>';
+    html += '<button class="examen-history-delete" onclick="deleteExamen(\'' + entry.date + '\')" title="Delete entry">✕</button>';
+    html += '</div>';
+    EXAMEN_FIELDS.forEach(f => {
+      const ans = (entry.answers && entry.answers[f.id]) || '';
+      if (!ans) return; // skip blank answers in history
+      html += '<div class="examen-history-q">';
+      html += '<div class="examen-history-q-label">' + escHtml(f.label) + '</div>';
+      html += '<div class="examen-history-q-text">' + escHtml(ans) + '</div>';
+      html += '</div>';
+    });
+    if (entry.reflection) {
+      html += '<div class="examen-reflection">';
+      html += '<div class="examen-reflection-label">✦ Reflection from Claude</div>';
+      html += '<div class="examen-reflection-text">' + escHtml(entry.reflection) + '</div>';
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+// ── RAPID LOG (Weekly Tasks) ──
+const RAPID_LOG_KEY = 'rol-rapid-log-v1';
+
+function loadRapidLogStates() {
+  try {
+    const raw = localStorage.getItem(RAPID_LOG_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return {};
+}
+
+function saveRapidLog() {
+  const states = {};
+  document.querySelectorAll('.rapid-checkbox').forEach(cb => {
+    const id = cb.getAttribute('data-id');
+    states[id] = cb.checked;
+  });
+  try { localStorage.setItem(RAPID_LOG_KEY, JSON.stringify(states)); } catch(e) {}
+}
+
+function initRapidLog() {
+  const states = loadRapidLogStates();
+  document.querySelectorAll('.rapid-checkbox').forEach(cb => {
+    const id = cb.getAttribute('data-id');
+    const item = cb.closest('.check-item');
+    if (states[id]) {
+      cb.checked = true;
+      if (item) item.classList.add('checked');
+    }
+    cb.addEventListener('change', () => {
+      if (item) {
+        if (cb.checked) item.classList.add('checked');
+        else item.classList.remove('checked');
+      }
+      saveRapidLog();
+    });
+  });
+}
+
+function clearRapidLog() {
+  if (!confirm('Reset all weekly checkboxes? (Use this at the start of a new week.)')) return;
+  document.querySelectorAll('.rapid-checkbox').forEach(cb => {
+    cb.checked = false;
+    const item = cb.closest('.check-item');
+    if (item) item.classList.remove('checked');
+  });
+  try { localStorage.removeItem(RAPID_LOG_KEY); } catch(e) {}
+}
+
+// ── WEEK NOTES ──
+const WEEK_NOTES_KEY = 'rol-week-notes-v1';
+let notesTimer = null;
+
+function initWeekNotes() {
+  const ta = document.getElementById('week-notes');
+  if (!ta) return;
+  try {
+    const saved = localStorage.getItem(WEEK_NOTES_KEY);
+    if (saved !== null) ta.value = saved;
+  } catch(e) {}
+  ta.addEventListener('input', () => {
+    if (notesTimer) clearTimeout(notesTimer);
+    const indicator = document.getElementById('notes-saved');
+    if (indicator) indicator.textContent = 'Saving…';
+    notesTimer = setTimeout(() => {
+      try { localStorage.setItem(WEEK_NOTES_KEY, ta.value); } catch(e) {}
+      if (indicator) {
+        const t = new Date();
+        indicator.textContent = '✓ Saved at ' + t.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', hour12:true});
+      }
+    }, 500);
+  });
+}
+
+// Init
+renderTodos();
+initRapidLog();
+initWeekNotes();
+</script>
+</body>
+</html>
